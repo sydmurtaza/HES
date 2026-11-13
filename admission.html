@@ -53,12 +53,10 @@
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=DM+Sans:wght@400;500;600;700;800&family=Lora:ital,wght@0,500;0,600;0,700;1,500&family=Noto+Nastaliq+Urdu:wght@400;700&display=swap">
   </noscript>
 
-  <!-- Preload Critical Hero Image -->
-  <link rel="preload" as="image" href="assets/images/hes-student-hero-clear.webp?v=2062" type="image/webp">
 
   <!-- Stylesheets -->
-  <link rel="stylesheet" href="assets/css/page-gateway.css?v=2063">
-  <link rel="stylesheet" href="assets/css/main.css?v=2063">
+  <link rel="stylesheet" href="assets/css/page-gateway.css?v=2064">
+  <link rel="stylesheet" href="assets/css/main.css?v=2064">
 
   <!-- Cloudflare Turnstile Captcha API -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -142,9 +140,15 @@
     <section class="cl-hero page-hero" id="admission-hero" aria-label="Student Admission at Hadi Education System">
       <!-- Hero Main Content -->
       <div class="container cl-hero-container">
-        <!-- Left: Text Block -->
+        <!-- Text Block -->
         <div class="cl-hero-text">
-          <span class="cl-hero-tag cl-fade-elem" data-en="STUDENT ENROLLMENT" data-ur="طلباء داخلہ">STUDENT ENROLLMENT</span>
+          <div class="cl-hero-tag-wrap cl-fade-elem">
+            <span class="cl-hero-tag" data-en="STUDENT ENROLLMENT" data-ur="طلباء داخلہ">STUDENT ENROLLMENT</span>
+            <div class="ar-student-badge">
+              <span class="ar-badge-dot" aria-hidden="true"></span>
+              <span class="ar-badge-text" data-en="Admissions Open" data-ur="داخلے جاری ہیں">Admissions Open</span>
+            </div>
+          </div>
           <h1 class="cl-hero-title cl-fade-elem">
             <span class="cl-hero-title-solid" data-en="Student" data-ur="داخلہ">Student</span>
             <span class="cl-hero-title-outline" data-en="Admission" data-ur="کا آغاز">Admission</span>
@@ -161,20 +165,6 @@
             <a href="#admission-roadmap" class="btn cl-btn-outline" data-en="Admission Roadmap" data-ur="مرحلہ وار راستہ">
               Admission Roadmap
             </a>
-          </div>
-        </div>
-
-        <!-- Right: Full-Size Unframed Student Portrait -->
-        <div class="ar-hero-student-card cl-fade-elem" aria-hidden="true">
-          <div class="ar-student-arch-frame">
-            <picture>
-              <source type="image/webp" srcset="assets/images/hes-student-hero-clear.webp?v=2062">
-              <img src="assets/images/hes-student-hero-clear.png?v=2062" alt="Hadi Education System Middle School Student in Uniform" class="ar-student-hero-img" width="764" height="1024" fetchpriority="high" decoding="async">
-            </picture>
-            <div class="ar-student-badge">
-              <span class="ar-badge-dot" aria-hidden="true"></span>
-              <span class="ar-badge-text" data-en="Admissions Open" data-ur="داخلے جاری ہیں">Admissions Open</span>
-            </div>
           </div>
         </div>
       </div>
