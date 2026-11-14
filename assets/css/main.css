@@ -13397,3 +13397,452 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   transform: none !important;
   transition: none !important;
 }
+
+/* ==========================================================================
+   INTERACTIVE SPECIMEN SWITCHER (Curriculum Master-Detail & Mobile Accordion)
+   Strictly styled with #14213D (Navy), #FFFFFF (White), and #E5E5E5 (Light Gray)
+   ========================================================================== */
+.specimen-switcher-section {
+  padding: 80px 0 90px;
+  background: #FFFFFF;
+  border-top: 1px solid #E5E5E5;
+}
+
+.specimen-header {
+  text-align: center;
+  max-width: 720px;
+  margin: 0 auto 52px;
+}
+
+.specimen-container {
+  display: flex;
+  align-items: flex-start;
+  gap: 36px;
+  width: 100%;
+}
+
+/* LEFT COLUMN: 45% Master Track List */
+.specimen-left-col {
+  flex: 0 0 calc(45% - 18px);
+  width: calc(45% - 18px);
+  max-width: calc(45% - 18px);
+}
+
+.specimen-group {
+  margin-bottom: 32px;
+}
+
+.specimen-group:last-child {
+  margin-bottom: 0;
+}
+
+.specimen-group-header {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 0 4px 12px;
+  border-bottom: 1px solid #E5E5E5;
+  margin-bottom: 14px;
+}
+
+.specimen-group-num {
+  font-size: 13px;
+  font-weight: 800;
+  color: #14213D;
+  font-feature-settings: 'tnum';
+  letter-spacing: 0.05em;
+}
+
+.specimen-group-slash {
+  font-size: 12px;
+  font-weight: 600;
+  color: #9CA3AF;
+}
+
+.specimen-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #14213D;
+  flex: 1;
+}
+
+.specimen-group-count {
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7280;
+  letter-spacing: 0.02em;
+}
+
+/* Track Trigger Item */
+.specimen-track-item {
+  margin-bottom: 12px;
+  border-radius: 14px;
+  transition: all 0.25s ease;
+}
+
+.specimen-track-item:last-child {
+  margin-bottom: 0;
+}
+
+.specimen-track-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 22px;
+  background: #FFFFFF;
+  border: 1px solid #E5E5E5;
+  border-radius: 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: border-color 0.2s ease, background-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+  font-family: inherit;
+}
+
+.specimen-track-trigger:hover {
+  border-color: #CBD5E1;
+  background-color: #F8FAFC;
+}
+
+.specimen-track-trigger:focus-visible {
+  outline: 2px solid #14213D;
+  outline-offset: 2px;
+}
+
+.specimen-track-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+}
+
+.specimen-track-num {
+  font-size: 18px;
+  font-weight: 700;
+  color: #9CA3AF;
+  font-feature-settings: 'tnum';
+  min-width: 28px;
+  transition: color 0.2s ease;
+}
+
+.specimen-track-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: #14213D;
+  line-height: 1.35;
+  transition: color 0.2s ease;
+  word-break: break-word;
+}
+
+.specimen-track-right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  margin-left: 12px;
+}
+
+/* Check circle on desktop */
+.specimen-check-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid #E5E5E5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: transparent;
+  background: #FFFFFF;
+  transition: all 0.2s ease;
+}
+
+.specimen-check-circle svg {
+  stroke-dasharray: 24;
+  stroke-dashoffset: 0;
+}
+
+/* Selected state (Desktop & Mobile trigger) */
+.specimen-track-item.is-selected .specimen-track-trigger {
+  border-color: #14213D;
+  background: #FFFFFF;
+  box-shadow: 0 4px 18px rgba(20, 33, 61, 0.08);
+}
+
+.specimen-track-item.is-selected .specimen-track-num {
+  color: #14213D;
+}
+
+.specimen-track-item.is-selected .specimen-track-name {
+  color: #14213D;
+  font-weight: 700;
+}
+
+.specimen-track-item.is-selected .specimen-check-circle {
+  border-color: #14213D;
+  background: #14213D;
+  color: #FFFFFF;
+}
+
+/* Chevron hidden on desktop */
+.specimen-mobile-chevron {
+  display: none;
+}
+
+.specimen-mobile-drawer {
+  display: none;
+}
+
+/* RIGHT COLUMN: 55% Sticky Specimen Card (Desktop) */
+.specimen-right-col {
+  flex: 0 0 calc(55% - 18px);
+  width: calc(55% - 18px);
+  max-width: calc(55% - 18px);
+  position: sticky;
+  top: 100px;
+  align-self: flex-start;
+}
+
+.specimen-card {
+  background: #14213D;
+  color: #FFFFFF;
+  border-radius: 20px;
+  padding: 40px 44px;
+  box-shadow: 0 20px 48px -12px rgba(20, 33, 61, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: opacity 0.22s cubic-bezier(0.4, 0, 0.2, 1), transform 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.specimen-card.is-switching {
+  opacity: 0.15;
+  transform: translateY(6px);
+}
+
+.specimen-eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 14px;
+}
+
+.specimen-title {
+  font-family: var(--font-heading, 'Playfair Display', serif);
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #FFFFFF;
+  margin: 0 0 24px;
+}
+
+.specimen-spec-wrap {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 28px;
+}
+
+.specimen-spec-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.6);
+  margin-bottom: 8px;
+}
+
+.specimen-spec-text {
+  font-size: 15px;
+  line-height: 1.65;
+  color: #FFFFFF;
+  margin: 0;
+}
+
+.specimen-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 24px;
+  padding: 24px 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  margin-bottom: 28px;
+}
+
+.specimen-meta-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.specimen-meta-icon {
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  flex-shrink: 0;
+}
+
+.specimen-meta-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.65);
+  margin-bottom: 4px;
+}
+
+.specimen-meta-val {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1.35;
+}
+
+.specimen-action-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.specimen-action-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.specimen-action-link .arrow {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.specimen-action-link:hover {
+  opacity: 0.85;
+}
+
+.specimen-action-link:hover .arrow {
+  transform: translateX(4px);
+}
+
+/* ==========================================================================
+   MOBILE ACCORDION LAYOUT (<768px)
+   Mutually exclusive single-open accordion drawers
+   ========================================================================== */
+@media (max-width: 768px) {
+  .specimen-switcher-section {
+    padding: 50px 0 60px;
+  }
+
+  .specimen-header {
+    margin-bottom: 36px;
+  }
+
+  .specimen-container {
+    display: block;
+  }
+
+  .specimen-left-col {
+    flex: none;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  /* Right column is hidden on mobile: each track has its own inline drawer */
+  .specimen-right-col {
+    display: none !important;
+  }
+
+  .specimen-check-circle {
+    display: none;
+  }
+
+  .specimen-mobile-chevron {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 26px;
+    height: 26px;
+    color: #14213D;
+    transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .specimen-mobile-drawer {
+    display: block;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    pointer-events: none;
+    transition: max-height 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
+  }
+
+  /* Open Mobile Drawer State */
+  .specimen-track-item.is-open .specimen-track-trigger {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-color: #14213D;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: #14213D;
+  }
+
+  .specimen-track-item.is-open .specimen-track-num {
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  .specimen-track-item.is-open .specimen-track-name {
+    color: #FFFFFF;
+  }
+
+  .specimen-track-item.is-open .specimen-mobile-chevron {
+    color: #FFFFFF;
+    transform: rotate(180deg);
+  }
+
+  .specimen-track-item.is-open .specimen-mobile-drawer {
+    max-height: 850px;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .specimen-card--mobile {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    border-radius: 0 0 14px 14px;
+    padding: 24px 20px;
+    box-shadow: 0 10px 24px -6px rgba(20, 33, 61, 0.25);
+    border: 1px solid #14213D;
+    border-top: none;
+  }
+
+  .specimen-card--mobile .specimen-title {
+    font-size: 24px;
+    margin-bottom: 18px;
+  }
+
+  .specimen-card--mobile .specimen-spec-wrap {
+    padding: 16px 18px;
+    margin-bottom: 20px;
+  }
+
+  .specimen-card--mobile .specimen-meta-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    padding: 16px 0;
+    margin-bottom: 20px;
+  }
+}
+

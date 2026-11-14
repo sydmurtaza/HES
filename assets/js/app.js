@@ -33,6 +33,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initTabVisibilityController();
   initMarqueeVisibilityObserver();
   initCampusSkylineFooter();
+  initSpecimenSwitcher();
 });
 
 /* ==========================================================================
@@ -3202,6 +3203,197 @@ function initCampusSkylineFooter() {
 
   observer.observe(footer);
 }
+
+/* ==========================================================================
+   INTERACTIVE SPECIMEN SWITCHER (Curriculum Master-Detail & Mobile Accordion)
+   ========================================================================== */
+function initSpecimenSwitcher() {
+  const container = document.getElementById("specimenContainer");
+  if (!container) return;
+
+  const trackItems = Array.from(container.querySelectorAll(".specimen-track-item"));
+  if (!trackItems.length) return;
+
+  const desktopCard = document.getElementById("specimenDetailCard");
+  const eyebrowEl = document.getElementById("specimenEyebrow");
+  const titleEl = document.getElementById("specimenTitle");
+  const descEl = document.getElementById("specimenDesc");
+  const cadenceEl = document.getElementById("specimenCadence");
+  const focusEl = document.getElementById("specimenFocus");
+
+  const TRACKS_DATA = [
+    {
+      index: 0,
+      eyebrowEn: "SPIRITUAL PILLAR • TRACK 01",
+      eyebrowUr: "روحانی ستون • ٹریک 01",
+      titleEn: "Nazra-e-Quran & Tajweed",
+      titleUr: "ناظرہ قرآن و تجوید",
+      specEn: "Flawless Makharij pronunciation, rules of Noon Sakinah and Meem Sakinah, and rhythmic recitation with proper phonetics.",
+      specUr: "مخارج کی درست ادائیگی، نون ساکنہ اور میم ساکنہ کے قواعد اور ترتیل کے ساتھ تلاوت۔",
+      cadenceEn: "Daily 45-Min Session",
+      cadenceUr: "روزانہ 45 منٹ کی کلاس",
+      focusEn: "Makharij & Tajweed Rules",
+      focusUr: "مخارج اور تجوید کے قواعد"
+    },
+    {
+      index: 1,
+      eyebrowEn: "SPIRITUAL PILLAR • TRACK 02",
+      eyebrowUr: "روحانی ستون • ٹریک 02",
+      titleEn: "Quranic Education & Islamic Jurisprudence",
+      titleUr: "قرآنی تعلیم و فقہ اسلامی",
+      specEn: "Practical understanding of Islamic jurisprudence, biographies of the Masoomeen (AS), and daily life ethics.",
+      specUr: "فقہ اسلامی کے احکام کی عملی سمجھ، سیرتِ معصومینؑ اور روزمرہ اخلاقیات۔",
+      cadenceEn: "Daily Session",
+      cadenceUr: "روزانہ پیریڈ",
+      focusEn: "Ethics & Jurisprudence",
+      focusUr: "اخلاقیات اور فقہی احکام"
+    },
+    {
+      index: 2,
+      eyebrowEn: "ACADEMIC PILLAR • TRACK 03",
+      eyebrowUr: "تعلیمی ستون • ٹریک 03",
+      titleEn: "Mathematics & Analytical Logic",
+      titleUr: "ریاضی اور تجزیاتی منطق",
+      specEn: "Arithmetic foundations advancing to geometry, algebra, trigonometry, and analytical calculus.",
+      specUr: "بنیادی حسابیات، جیومیٹری، الجبرا، مثلثیات اور کیلکولس کی جامع تفہیم۔",
+      cadenceEn: "Daily Double-Period",
+      cadenceUr: "روزانہ ڈبل پیریڈ",
+      focusEn: "FBISE Mathematics Standards",
+      focusUr: "فیڈرل بورڈ میتھ معیار"
+    },
+    {
+      index: 3,
+      eyebrowEn: "ACADEMIC PILLAR • TRACK 04",
+      eyebrowUr: "تعلیمی ستون • ٹریک 04",
+      titleEn: "Laboratory Sciences",
+      titleUr: "سائنسی لیبارٹریز",
+      specEn: "Hands-on experimental demonstrations in Physics, Chemistry, and Biology laboratories led by senior specialists.",
+      specUr: "سینئر ماہرین کی زیرِ نگرانی فزکس، کیمسٹری اور بائیولوجی کے عملی تجربات۔",
+      cadenceEn: "Daily Theory & Lab Sessions",
+      cadenceUr: "روزانہ تھیوری اور لیب سیشن",
+      focusEn: "Experimental Physics & Chemistry",
+      focusUr: "طبیعیات و کیمیا کے تجربات"
+    },
+    {
+      index: 4,
+      eyebrowEn: "ACADEMIC PILLAR • TRACK 05",
+      eyebrowUr: "تعلیمی ستون • ٹریک 05",
+      titleEn: "English & Computer Science",
+      titleUr: "انگریزی اور کمپیوٹر سائنس",
+      specEn: "Bilingual fluency, creative writing, public discourse, computer coding, and modern digital literacy.",
+      specUr: "دو لسانی روانی، تحریری و تقریری صلاحیت، کمپیوٹر کوڈنگ اور ڈیجیٹل مہارت۔",
+      cadenceEn: "Daily Language & IT Labs",
+      cadenceUr: "روزانہ لینگویج اور آئی ٹی لیب",
+      focusEn: "Fluency, Coding & ICT",
+      focusUr: "روانی، کوڈنگ اور آئی ٹی"
+    }
+  ];
+
+  let activeIndex = 0;
+  const isMobile = () => window.innerWidth <= 768;
+
+  function updateDesktopCard(index) {
+    if (!desktopCard || index < 0 || index >= TRACKS_DATA.length) return;
+    const data = TRACKS_DATA[index];
+    const isUrdu = document.documentElement.getAttribute("lang") === "ur";
+
+    desktopCard.classList.add("is-switching");
+
+    setTimeout(() => {
+      if (eyebrowEl) {
+        eyebrowEl.setAttribute("data-en", data.eyebrowEn);
+        eyebrowEl.setAttribute("data-ur", data.eyebrowUr);
+        eyebrowEl.textContent = isUrdu ? data.eyebrowUr : data.eyebrowEn;
+      }
+      if (titleEl) {
+        titleEl.setAttribute("data-en", data.titleEn);
+        titleEl.setAttribute("data-ur", data.titleUr);
+        titleEl.textContent = isUrdu ? data.titleUr : data.titleEn;
+      }
+      if (descEl) {
+        descEl.setAttribute("data-en", data.specEn);
+        descEl.setAttribute("data-ur", data.specUr);
+        descEl.textContent = isUrdu ? data.specUr : data.specEn;
+      }
+      if (cadenceEl) {
+        cadenceEl.setAttribute("data-en", data.cadenceEn);
+        cadenceEl.setAttribute("data-ur", data.cadenceUr);
+        cadenceEl.textContent = isUrdu ? data.cadenceUr : data.cadenceEn;
+      }
+      if (focusEl) {
+        focusEl.setAttribute("data-en", data.focusEn);
+        focusEl.setAttribute("data-ur", data.focusUr);
+        focusEl.textContent = isUrdu ? data.focusUr : data.focusEn;
+      }
+
+      desktopCard.classList.remove("is-switching");
+    }, 120);
+  }
+
+  trackItems.forEach((item, index) => {
+    const trigger = item.querySelector(".specimen-track-trigger");
+    if (!trigger) return;
+
+    trigger.addEventListener("click", () => {
+      if (isMobile()) {
+        // Mobile mutually-exclusive accordion logic
+        const currentlyOpen = item.classList.contains("is-open");
+
+        if (currentlyOpen) {
+          // Collapse clicked item
+          item.classList.remove("is-open");
+          trigger.setAttribute("aria-expanded", "false");
+        } else {
+          // Close all other items
+          trackItems.forEach(otherItem => {
+            otherItem.classList.remove("is-open");
+            const otherTrigger = otherItem.querySelector(".specimen-track-trigger");
+            if (otherTrigger) {
+              otherTrigger.setAttribute("aria-expanded", "false");
+            }
+          });
+
+          // Open clicked item
+          item.classList.add("is-open");
+          trigger.setAttribute("aria-expanded", "true");
+        }
+
+        // Keep selection state synced
+        trackItems.forEach(t => t.classList.remove("is-selected"));
+        item.classList.add("is-selected");
+        activeIndex = index;
+      } else {
+        // Desktop master-detail logic
+        if (activeIndex === index && item.classList.contains("is-selected")) return;
+
+        trackItems.forEach((t, i) => {
+          t.classList.toggle("is-selected", i === index);
+          const tTrigger = t.querySelector(".specimen-track-trigger");
+          if (tTrigger) {
+            tTrigger.setAttribute("aria-selected", i === index ? "true" : "false");
+          }
+        });
+
+        activeIndex = index;
+        updateDesktopCard(index);
+      }
+    });
+  });
+
+  // Handle responsive viewport change
+  window.addEventListener("resize", () => {
+    if (!isMobile()) {
+      trackItems.forEach((t, i) => {
+        t.classList.toggle("is-selected", i === activeIndex);
+        const tTrigger = t.querySelector(".specimen-track-trigger");
+        if (tTrigger) {
+          tTrigger.setAttribute("aria-selected", i === activeIndex ? "true" : "false");
+        }
+      });
+    }
+  }, { passive: true });
+}
+
 
 
 
