@@ -539,6 +539,100 @@ const siteContent = {
       termsEn: "Terms",
       termsUr: "شرائط"
     }
+  },
+
+  // --- Immersive Page Heroes ---
+  hero: {
+    about: {
+      eyebrowEn: "OUR STORY & LEADERSHIP",
+      eyebrowUr: "ہماری تاریخ و قیادت",
+      titleEn: "About Us",
+      titleUr: "ہمارا تعارف",
+      summaryEn: "Uniting academic excellence with spiritual training since 2017.",
+      summaryUr: "2017 سے ہم عصری تعلیمی معیار اور روحانی تربیت کو یکجا کر رہے ہیں۔",
+      primaryCta: {
+        labelEn: "Our Vision & Mission",
+        labelUr: "ہمارا وژن و مشن",
+        href: "#mission-vision"
+      },
+      secondaryCta: {
+        labelEn: "Meet Leadership",
+        labelUr: "ہماری قیادت",
+        href: "#leadership"
+      }
+    },
+    academics: {
+      eyebrowEn: "CURRICULAR EXCELLENCE",
+      eyebrowUr: "منفرد دوہرا تعلیمی نصاب",
+      titleEn: "Academics",
+      titleUr: "تعلیمی پروگرامز",
+      summaryEn: "Blending Quranic sciences with modern curriculum to shape tomorrow's nation builders.",
+      summaryUr: "قرآنی علوم اور جدید نصاب کا امتزاج تاکہ باصلاحیت معمارانِ قوم تیار ہوں۔",
+      primaryCta: {
+        labelEn: "Explore Curriculum",
+        labelUr: "نصاب دیکھیں",
+        href: "#curriculum-tracks"
+      },
+      secondaryCta: {
+        labelEn: "Apply for Admission",
+        labelUr: "آن لائن داخلہ",
+        href: "admission.html"
+      }
+    },
+    campusLife: {
+      eyebrowEn: "CAMPUS LIFE",
+      eyebrowUr: "کیمپس لائف",
+      titleEn: "Campus Life",
+      titleUr: "کیمپس لائف",
+      summaryEn: "A vibrant community fostering brotherhood, discipline, athletics, and character.",
+      summaryUr: "ایک متحرک کیمپس جہاں اخوت، نظم و ضبط، کھیل اور کردار سازی پروان چڑھتی ہے۔",
+      primaryCta: {
+        labelEn: "Watch the Film",
+        labelUr: "ویڈیو دیکھیں",
+        href: "#clWatchFilmBtn"
+      },
+      secondaryCta: {
+        labelEn: "Book a Visit",
+        labelUr: "کیمپس وزٹ",
+        href: "admission.html"
+      }
+    },
+    admission: {
+      eyebrowEn: "STUDENT ENROLLMENT",
+      eyebrowUr: "طلباء داخلہ",
+      titleEn: "Admissions",
+      titleUr: "داخلے",
+      summaryEn: "Join Hadi Education System — follow our simple roadmap to enroll your child today.",
+      summaryUr: "ہادی ایجوکیشن سسٹم کا حصہ بنیں — اپنے بچے کے روشن تعلیمی مستقبل کا آغاز کریں۔",
+      primaryCta: {
+        labelEn: "Fill Online Form",
+        labelUr: "آن لائن فارم پر کریں",
+        href: "#application-form"
+      },
+      secondaryCta: {
+        labelEn: "Admission Roadmap",
+        labelUr: "مرحلہ وار راستہ",
+        href: "#admission-roadmap"
+      }
+    },
+    contact: {
+      eyebrowEn: "GET IN TOUCH",
+      eyebrowUr: "ہم سے رابطہ کریں",
+      titleEn: "Contact Us",
+      titleUr: "ہم سے رابطہ",
+      summaryEn: "We welcome parents and guardians to visit our campus or connect with our team.",
+      summaryUr: "ہم والدین اور سرپرستوں کو کیمپس وزٹ اور رہنمائی کے لیے خوش آمدید کہتے ہیں۔",
+      primaryCta: {
+        labelEn: "Send Message",
+        labelUr: "پیغام بھیجیں",
+        href: "#contact-details"
+      },
+      secondaryCta: {
+        labelEn: "Call Admissions Desk",
+        labelUr: "داخلہ ڈیسک پر کال کریں",
+        href: "tel:+923145075399"
+      }
+    }
   }
 };
 

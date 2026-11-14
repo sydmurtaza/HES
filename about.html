@@ -24,6 +24,7 @@
   <link rel="manifest" href="site.webmanifest">
   <meta name="theme-color" content="#14213D">
   <meta name="color-scheme" content="light">
+  <link rel="preload" as="image" href="assets/images/cl/IMG_9602.jpg">
 
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website">
@@ -58,7 +59,7 @@
   <link rel="preload" as="image" href="assets/images/principal-muhammad-ali-hamdani.webp" type="image/webp">
   <!-- Stylesheets -->
   <link rel="stylesheet" href="assets/css/page-gateway.css?v=2063">
-  <link rel="stylesheet" href="assets/css/main.css?v=2076">
+  <link rel="stylesheet" href="assets/css/main.css?v=2081">
 </head>
 
 <body class="page-about">
@@ -137,49 +138,44 @@
   <main id="main-content">
 
     <!-- =========================================================================
-         PAGE HERO (Full-bleed, 100svh, unified rhythm with Campus Life)
+         IMMERSIVE PAGE HERO
          ========================================================================= -->
-    <section class="cl-hero page-hero" id="about-hero" aria-label="About Hadi Education System">
-      <!-- Background Image (Faculty & Leadership Convocation) -->
-      <div class="cl-hero-bg-wrap" aria-hidden="true">
-        <picture>
-          <source media="(max-width: 768px)" srcset="assets/images/cl/IMG_9602-mobile.webp" type="image/webp">
-          <source media="(max-width: 768px)" srcset="assets/images/cl/IMG_9602.jpg">
-          <source srcset="assets/images/cl/IMG_9602.webp" type="image/webp">
-          <img src="assets/images/cl/IMG_9602.jpg" alt="Faculty &amp; Leadership Convocation at Hadi Education System" class="cl-hero-fallback-img" fetchpriority="high" decoding="async" width="1920" height="1440">
-        </picture>
-      </div>
+    <section class="hero-full hero-immersive" id="about-hero" aria-labelledby="about-hero-title">
+      <!-- Real Hero Image Element -->
+      <img src="assets/images/cl/IMG_9602.jpg" alt="" class="hero__img" width="1920" height="1440" fetchpriority="high" decoding="async">
 
-      <!-- Overlays (Navy Tint & Left-to-Right Reading Gradient) -->
-      <div class="cl-hero-tint" aria-hidden="true"></div>
-      <div class="cl-hero-gradient" aria-hidden="true"></div>
+      <!-- Bottom Scrim -->
+      <div class="hero-scrim" aria-hidden="true"></div>
 
-      <!-- Hero Main Content -->
-      <div class="container cl-hero-container">
-        <!-- Left: Text Block -->
-        <div class="cl-hero-text">
-          <span class="cl-hero-tag cl-fade-elem" data-en="OUR STORY &amp; LEADERSHIP" data-ur="ہماری تاریخ و قیادت">OUR STORY &amp; LEADERSHIP</span>
-          <h1 class="cl-hero-title cl-fade-elem">
-            <span class="cl-hero-title-solid" data-en="About" data-ur="ہمارا">About</span>
-            <span class="cl-hero-title-outline" data-en="Us" data-ur="تعارف">Us</span>
-          </h1>
-          <p class="cl-hero-desc cl-fade-elem"
-            data-en="Established in 2017 in Balkasar, District Chakwal, Hadi Education System unites academic excellence and spiritual training to shape principled nation builders."
-            data-ur="2017 میں بلکسر، ضلع چکوال میں قائم ہادی ایجوکیشن سسٹم اعلیٰ تعلیمی معیار اور روحانی تربیت کو یکجا کر کے باکردار معمارانِ قوم تیار کرتا ہے۔">
-            Established in 2017 in Balkasar, District Chakwal, Hadi Education System unites academic excellence and spiritual training to shape principled nation builders.
-          </p>
-          <div class="cl-hero-actions cl-fade-elem">
-            <a href="#mission-vision" class="btn cl-btn-white" data-en="Our Vision &amp; Mission" data-ur="ہمارا وژن و مشن">
-              Our Vision &amp; Mission
+      <!-- Caption Panel, Anchored to Bottom -->
+      <div class="hero-panel-wrap">
+        <div class="hero-panel">
+          <!-- Left: Eyebrow + H1 Title -->
+          <div class="hero-panel__title-col">
+            <span class="hero-panel__eyebrow" data-en="OUR STORY &amp; LEADERSHIP" data-ur="ہماری تاریخ و قیادت">OUR STORY &amp; LEADERSHIP</span>
+            <h1 class="hero-panel__title" id="about-hero-title" data-en="About Us" data-ur="ہمارا تعارف">About Us</h1>
+          </div>
+
+          <!-- Middle: One-Sentence Summary -->
+          <div class="hero-panel__summary-col">
+            <p class="hero-panel__summary" data-en="Uniting academic excellence with spiritual training since 2017." data-ur="2017 سے ہم عصری تعلیمی معیار اور روحانی تربیت کو یکجا کر رہے ہیں۔">
+              Uniting academic excellence with spiritual training since 2017.
+            </p>
+          </div>
+
+          <!-- Right: Buttons -->
+          <div class="hero-panel__actions-col">
+            <a href="#mission-vision" class="hero-btn hero-btn--primary">
+              <span class="hero-btn__text" data-en="Our Vision &amp; Mission" data-ur="ہمارا وژن و مشن">Our Vision &amp; Mission</span>
+              <span class="hero-btn__arrow" aria-hidden="true">→</span>
             </a>
-            <a href="#leadership" class="btn cl-btn-outline" data-en="Meet Leadership" data-ur="ہماری قیادت">
-              Meet Leadership
+            <a href="#leadership" class="hero-btn hero-btn--secondary">
+              <span class="hero-btn__text" data-en="Meet Leadership" data-ur="ہماری قیادت">Meet Leadership</span>
             </a>
           </div>
         </div>
       </div>
     </section>
-
 
     <!-- OUR MISSION & VISION -->
     <section class="section mv-section" id="mission-vision" aria-label="Our Vision and Mission">
@@ -665,8 +661,8 @@
         <h2 class="section-title">Related Pages &amp; Pathways</h2>
         <div class="related-pages-grid">
           <a href="academics.html" class="related-page-card" data-track-event="related_page_click" data-track-label="academics.html">
-            <h3><span>Academics & Hifz Track</span> <span aria-hidden="true">→</span></h3>
-            <p>Explore our dual-track Quranic and FBISE academic model.</p>
+            <h3><span data-en="Academics &amp; Curriculum" data-ur="تعلیمی پروگرامز و نصاب">Academics &amp; Curriculum</span> <span aria-hidden="true">→</span></h3>
+            <p data-en="Explore our Quranic education and FBISE academic model." data-ur="ہمارا قرآنی نصاب اور فیڈرل بورڈ تعلیمی ماڈل دیکھیں۔">Explore our Quranic education and FBISE academic model.</p>
           </a>
           <a href="campus-life.html" class="related-page-card" data-track-event="related_page_click" data-track-label="campus-life.html">
             <h3><span>Campus Life & Boarding</span> <span aria-hidden="true">→</span></h3>
@@ -811,11 +807,11 @@
     </div>
   </div>
 
-  <script src="assets/js/siteContent.js?v=2070"></script>
+  <script src="assets/js/siteContent.js?v=2080"></script>
   <script src="assets/js/page-gateway.js?v=2063"></script>
   <script src="assets/js/toast.js?v=2046"></script>
   <script src="assets/js/analytics.js?v=2046" defer></script>
-  <script src="assets/js/app.js?v=2072"></script>
+  <script src="assets/js/app.js?v=2080"></script>
 </body>
 
 </html>

@@ -12996,9 +12996,8 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 #admission-hero {
   background-color: #FFFFFF !important;
   background-image: none !important;
-  height: 100vh !important;
-  height: 100svh !important;
-  min-height: 560px !important;
+  height: clamp(480px, 62vh, 660px) !important;
+  min-height: 480px !important;
   display: flex !important;
   align-items: stretch !important;
   padding-top: clamp(80px, 10vh, 100px) !important;
@@ -13036,10 +13035,10 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 #admission-hero .cl-hero-text {
   display: flex !important;
   flex-direction: column !important;
-  justify-content: center !important;
-  align-self: center !important;
+  justify-content: flex-end !important;
+  align-self: flex-end !important;
   padding-top: 20px !important;
-  padding-bottom: clamp(50px, 8vh, 90px) !important;
+  padding-bottom: 3.5rem !important;
   max-width: 620px !important;
   text-align: left !important;
 }
@@ -13171,8 +13170,8 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 
 #admission-hero .ar-student-hero-img {
   display: block !important;
-  height: calc(100svh - clamp(80px, 10vh, 100px)) !important;
-  max-height: calc(100svh - clamp(80px, 10vh, 100px)) !important;
+  height: calc(clamp(480px, 62vh, 660px) - clamp(80px, 10vh, 100px)) !important;
+  max-height: calc(clamp(480px, 62vh, 660px) - clamp(80px, 10vh, 100px)) !important;
   width: auto !important;
   max-width: 100% !important;
   object-fit: contain !important;
@@ -13856,6 +13855,434 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
     gap: 16px;
     padding: 16px 0;
     margin-bottom: 20px;
+  }
+}
+
+/* ==========================================================================
+   IMMERSIVE PAGE HERO SYSTEM (Shared Full-Screen Base & Immersive Inner Pages)
+   ========================================================================== */
+.hero-full {
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  min-height: max(100svh, 560px) !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+@media (max-height: 560px) {
+  .hero-full {
+    min-height: 560px !important;
+  }
+}
+
+/* Inner Page Variant: Immersive Page Hero */
+.hero-immersive {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: flex-end !important;
+  align-items: stretch !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background-color: var(--navy, #14213D) !important;
+  isolation: isolate !important;
+}
+
+/* Remove all old full-screen tints, overlays, and pseudo-elements */
+.hero-immersive::before,
+.hero-immersive::after,
+.hero-immersive .cl-hero-tint,
+.hero-immersive .cl-hero-gradient {
+  display: none !important;
+}
+
+/* Real Image Element (class hero__img) */
+.hero-immersive .hero__img {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: var(--hero-focus, 50% 50%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  transform: scale(1);
+  animation: heroImgSettle 1.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes heroImgSettle {
+  from {
+    transform: scale(1.06);
+  }
+  to {
+    transform: scale(1);
+  }
+}
+
+/* Per-Page Focal Points */
+#about-hero {
+  --hero-focus: 50% 30%;
+  --hero-focus-mobile: 50% 25%;
+}
+
+#academics-hero {
+  --hero-focus: 50% 40%;
+  --hero-focus-mobile: 50% 35%;
+}
+
+#campus-hero {
+  --hero-focus: 50% 35%;
+  --hero-focus-mobile: 50% 30%;
+}
+
+/* Campus Life Background Video & Controls */
+#campus-hero .cl-hero-video {
+  position: absolute !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  object-position: var(--hero-focus, 50% 35%) !important;
+  z-index: 0 !important;
+  pointer-events: none !important;
+  opacity: 1 !important;
+  display: block !important;
+}
+
+#campus-hero .cl-video-toggle {
+  position: absolute !important;
+  top: 96px !important;
+  right: calc((100% - 1260px) / 2 + 24px) !important;
+  z-index: 5 !important;
+  display: flex !important;
+}
+
+@media (max-width: 1320px) {
+  #campus-hero .cl-video-toggle {
+    right: 24px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  #campus-hero .cl-video-toggle {
+    top: 80px !important;
+    right: 16px !important;
+  }
+}
+
+#contact-hero {
+  --hero-focus: 50% 45%;
+  --hero-focus-mobile: 50% 40%;
+}
+
+@media (max-width: 639px) {
+  .hero-immersive .hero__img {
+    object-position: var(--hero-focus-mobile, var(--hero-focus, 50% 50%)) !important;
+  }
+}
+
+/* Bottom Scrim: Linear-gradient from transparent to rgba(0,0,0,0.55) over bottom 45% */
+.hero-immersive .hero-scrim {
+  position: absolute !important;
+  inset: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(to bottom, transparent 55%, rgba(0, 0, 0, 0.55) 100%) !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+/* Caption Panel Wrap: Anchored to bottom, matching floating nav pill alignment & max-width */
+.hero-immersive .hero-panel-wrap {
+  position: relative !important;
+  z-index: 2 !important;
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+  padding-inline: 24px !important;
+  box-sizing: border-box !important;
+  pointer-events: none !important;
+}
+
+/* Caption Panel: Navy #14213D @ 90%, 10px blur, 1px white @ 18% border, 24px radius, 28px 36px padding */
+.hero-panel {
+  pointer-events: auto !important;
+  width: 100% !important;
+  max-width: 1260px !important;
+  margin-bottom: 32px !important;
+  background: #14213D !important;
+  background: rgba(20, 33, 61, 0.90) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  border-radius: 24px !important;
+  padding: 28px 36px !important;
+  box-sizing: border-box !important;
+  box-shadow: 0 16px 36px -8px rgba(0, 0, 0, 0.35) !important;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: heroPanelRise 600ms cubic-bezier(0.16, 1, 0.3, 1) 200ms forwards;
+}
+
+@supports not ((backdrop-filter: blur(10px)) or (-webkit-backdrop-filter: blur(10px))) {
+  .hero-panel {
+    background: #14213D !important;
+  }
+}
+
+@keyframes heroPanelRise {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Panel Typography */
+.hero-panel__eyebrow {
+  display: block !important;
+  font-family: var(--font-sans, 'DM Sans', system-ui, sans-serif) !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.2em !important;
+  color: #E5E5E5 !important;
+  margin: 0 0 6px 0 !important;
+  line-height: 1.2 !important;
+}
+
+.hero-panel__title {
+  font-family: var(--font-serif, 'Lora', Georgia, serif) !important;
+  font-size: clamp(40px, 5vw, 64px) !important;
+  font-weight: 500 !important;
+  line-height: 1.05 !important;
+  color: #FFFFFF !important;
+  margin: 0 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.hero-panel__summary {
+  font-family: var(--font-sans, 'DM Sans', system-ui, sans-serif) !important;
+  font-size: 17px !important;
+  line-height: 1.45 !important;
+  color: #E5E5E5 !important;
+  margin: 0 !important;
+  max-width: 38ch !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 2 !important;
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+/* Buttons */
+.hero-panel__actions-col {
+  display: flex !important;
+}
+
+.hero-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+  min-height: 48px !important;
+  padding-block: 12px !important;
+  padding-inline: 24px !important;
+  border-radius: 9999px !important;
+  font-family: var(--font-sans, 'DM Sans', system-ui, sans-serif) !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease, transform 0.2s ease !important;
+}
+
+.hero-btn:focus,
+.hero-btn:focus-visible {
+  outline: 2px solid #FFFFFF !important;
+  outline-offset: 2px !important;
+}
+
+/* Primary Button: White bg, Navy text, Arrow */
+.hero-btn--primary {
+  background: #FFFFFF !important;
+  color: #14213D !important;
+  border: 1px solid #FFFFFF !important;
+}
+
+.hero-btn--primary:hover {
+  background: #E5E5E5 !important;
+  border-color: #E5E5E5 !important;
+  color: #14213D !important;
+}
+
+.hero-btn__arrow {
+  display: inline-block !important;
+  font-size: 16px !important;
+  line-height: 1 !important;
+  transition: transform 0.2s ease !important;
+}
+
+.hero-btn--primary:hover .hero-btn__arrow {
+  transform: translateX(4px) !important;
+}
+
+/* Secondary Button: Transparent bg, 1px white border, white text */
+.hero-btn--secondary {
+  background: transparent !important;
+  color: #FFFFFF !important;
+  border: 1px solid #FFFFFF !important;
+}
+
+.hero-btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.12) !important;
+  border-color: #FFFFFF !important;
+  color: #FFFFFF !important;
+}
+
+/* Layout 1: Desktop (1024px and up) - Three-part grid */
+@media (min-width: 1024px) {
+  .hero-panel {
+    display: grid !important;
+    grid-template-columns: 1.25fr 1fr auto !important;
+    align-items: center !important;
+    gap: 36px !important;
+  }
+
+  .hero-panel__actions-col {
+    flex-direction: column !important;
+    gap: 10px !important;
+    min-width: 210px !important;
+  }
+
+  .hero-panel__actions-col .hero-btn {
+    width: 100% !important;
+  }
+}
+
+/* Layout 2: Tablet (640px to 1023px) - Title/summary top, buttons side by side underneath */
+@media (min-width: 640px) and (max-width: 1023px) {
+  .hero-panel {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    row-gap: 20px !important;
+    column-gap: 24px !important;
+    align-items: center !important;
+    padding: 24px 28px !important;
+  }
+
+  .hero-panel__title-col {
+    grid-column: 1 / 2 !important;
+  }
+
+  .hero-panel__summary-col {
+    grid-column: 2 / 3 !important;
+  }
+
+  .hero-panel__actions-col {
+    grid-column: 1 / -1 !important;
+    flex-direction: row !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+
+  .hero-panel__actions-col .hero-btn {
+    flex: 1 !important;
+  }
+}
+
+/* Layout 3: Phone (below 640px) - One column, stacked */
+@media (max-width: 639px) {
+  .hero-panel-wrap {
+    padding-inline: 16px !important;
+  }
+
+  .hero-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    margin-bottom: 16px !important;
+    border-radius: 20px !important;
+    padding: 20px 20px !important;
+  }
+
+  .hero-panel__title {
+    font-size: clamp(32px, 8vw, 42px) !important;
+  }
+
+  .hero-panel__summary {
+    font-size: 15px !important;
+    max-width: 100% !important;
+  }
+
+  .hero-panel__actions-col {
+    flex-direction: column !important;
+    gap: 10px !important;
+    width: 100% !important;
+  }
+
+  .hero-panel__actions-col .hero-btn {
+    width: 100% !important;
+  }
+}
+
+/* RTL & Urdu */
+[dir="rtl"] .hero-panel {
+  text-align: right !important;
+}
+
+[dir="rtl"] .hero-btn__arrow {
+  transform: scaleX(-1) !important;
+}
+
+[dir="rtl"] .hero-btn--primary:hover .hero-btn__arrow {
+  transform: scaleX(-1) translateX(4px) !important;
+}
+
+[dir="rtl"] .hero-panel__title,
+html:lang(ur) .hero-panel__title {
+  font-family: var(--font-urdu, 'Noto Nastaliq Urdu'), var(--font-serif, 'Lora'), serif !important;
+  line-height: 1.5 !important;
+  font-size: clamp(30px, 4vw, 48px) !important;
+  padding-block: 4px !important;
+}
+
+[dir="rtl"] .hero-panel__summary,
+html:lang(ur) .hero-panel__summary {
+  font-family: var(--font-urdu, 'Noto Nastaliq Urdu'), var(--font-sans, 'DM Sans'), sans-serif !important;
+  line-height: 1.85 !important;
+  font-size: 15px !important;
+  -webkit-line-clamp: 3 !important;
+}
+
+[dir="rtl"] .hero-panel__eyebrow,
+html:lang(ur) .hero-panel__eyebrow {
+  font-family: var(--font-urdu, 'Noto Nastaliq Urdu'), var(--font-sans, 'DM Sans'), sans-serif !important;
+  letter-spacing: normal !important;
+}
+
+[dir="rtl"] .hero-btn,
+html:lang(ur) .hero-btn {
+  font-family: var(--font-urdu, 'Noto Nastaliq Urdu'), var(--font-sans, 'DM Sans'), sans-serif !important;
+}
+
+/* Reduced Motion Mode */
+@media (prefers-reduced-motion: reduce) {
+  .hero-immersive .hero__img {
+    animation: none !important;
+    transform: none !important;
+  }
+
+  .hero-panel {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .hero-btn--primary:hover .hero-btn__arrow {
+    transform: none !important;
   }
 }
 

@@ -34,7 +34,59 @@ document.addEventListener("DOMContentLoaded", () => {
   initMarqueeVisibilityObserver();
   initCampusSkylineFooter();
   initSpecimenSwitcher();
+  initHeroContent();
 });
+
+function initHeroContent() {
+  if (typeof window === "undefined" || !window.siteContent || !window.siteContent.hero) return;
+  const path = window.location.pathname.toLowerCase();
+  let pageKey = "";
+  if (path.includes("about")) pageKey = "about";
+  else if (path.includes("academic")) pageKey = "academics";
+  else if (path.includes("campus") || path.includes("facilities")) pageKey = "campusLife";
+  else if (path.includes("admission")) pageKey = "admission";
+  else if (path.includes("contact")) pageKey = "contact";
+  if (!pageKey || !window.siteContent.hero[pageKey]) return;
+
+  const data = window.siteContent.hero[pageKey];
+  const heroSection = document.querySelector(".hero-immersive");
+  if (!heroSection) return;
+
+  const eyebrow = heroSection.querySelector(".hero-panel__eyebrow");
+  const title = heroSection.querySelector(".hero-panel__title");
+  const summary = heroSection.querySelector(".hero-panel__summary");
+  const primaryCta = heroSection.querySelector(".hero-btn--primary");
+  const primaryCtaText = heroSection.querySelector(".hero-btn--primary .hero-btn__text");
+  const secondaryCta = heroSection.querySelector(".hero-btn--secondary");
+  const secondaryCtaText = heroSection.querySelector(".hero-btn--secondary .hero-btn__text");
+
+  if (eyebrow) {
+    eyebrow.setAttribute("data-en", data.eyebrowEn);
+    eyebrow.setAttribute("data-ur", data.eyebrowUr);
+  }
+  if (title) {
+    title.setAttribute("data-en", data.titleEn);
+    title.setAttribute("data-ur", data.titleUr);
+  }
+  if (summary) {
+    summary.setAttribute("data-en", data.summaryEn);
+    summary.setAttribute("data-ur", data.summaryUr);
+  }
+  if (primaryCta && data.primaryCta) {
+    if (data.primaryCta.href) primaryCta.setAttribute("href", data.primaryCta.href);
+    if (primaryCtaText) {
+      primaryCtaText.setAttribute("data-en", data.primaryCta.labelEn);
+      primaryCtaText.setAttribute("data-ur", data.primaryCta.labelUr);
+    }
+  }
+  if (secondaryCta && data.secondaryCta) {
+    if (data.secondaryCta.href) secondaryCta.setAttribute("href", data.secondaryCta.href);
+    if (secondaryCtaText) {
+      secondaryCtaText.setAttribute("data-en", data.secondaryCta.labelEn);
+      secondaryCtaText.setAttribute("data-ur", data.secondaryCta.labelUr);
+    }
+  }
+}
 
 /* ==========================================================================
    0. SCROLL-TRIGGERED REVEALS
@@ -49,6 +101,8 @@ function initScrollReveal() {
     "footer [class*='card'], footer [class*='item']"
   )).filter(element =>
     !element.closest(".hero") &&
+    !element.closest(".hero-full") &&
+    !element.closest(".hero-immersive") &&
     !element.closest(".cl-hero") &&
     !element.closest(".page-about-hero") &&
     !element.closest(".hero-unified") &&

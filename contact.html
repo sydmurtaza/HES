@@ -23,6 +23,7 @@
   <link rel="manifest" href="site.webmanifest">
   <meta name="theme-color" content="#14213D">
   <meta name="color-scheme" content="light">
+  <link rel="preload" as="image" href="assets/images/building.jpg">
 
   <!-- Open Graph / Social Sharing -->
   <meta property="og:type" content="website">
@@ -54,7 +55,7 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="assets/css/page-gateway.css?v=2063">
-  <link rel="stylesheet" href="assets/css/main.css?v=2076">
+  <link rel="stylesheet" href="assets/css/main.css?v=2081">
 
   <!-- Cloudflare Turnstile Captcha API -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
@@ -136,38 +137,39 @@
 
 
     <!-- =========================================================================
-         PAGE HERO (Full-bleed, 100svh, unified rhythm with Campus Life)
+         IMMERSIVE PAGE HERO
          ========================================================================= -->
-    <section class="cl-hero page-hero" id="contact-hero" aria-label="Contact Hadi Education System">
-      <!-- Background Image -->
-      <div class="cl-hero-bg-wrap" aria-hidden="true">
-        <picture><source srcset="assets/images/building.webp" type="image/webp"><img src="assets/images/building.jpg" alt="Hadi Education System Campus" class="cl-hero-fallback-img" fetchpriority="high" width="1920" height="1080"></picture>
-      </div>
+    <section class="hero-full hero-immersive" id="contact-hero" aria-labelledby="contact-hero-title">
+      <!-- Real Hero Image Element -->
+      <img src="assets/images/building.jpg" alt="" class="hero__img" width="1920" height="1080" fetchpriority="high" decoding="async">
 
-      <!-- Overlays (Navy Tint & Left-to-Right Reading Gradient) -->
-      <div class="cl-hero-tint" aria-hidden="true"></div>
-      <div class="cl-hero-gradient" aria-hidden="true"></div>
+      <!-- Bottom Scrim -->
+      <div class="hero-scrim" aria-hidden="true"></div>
 
-      <!-- Hero Main Content -->
-      <div class="container cl-hero-container">
-        <!-- Left: Text Block -->
-        <div class="cl-hero-text">
-          <span class="cl-hero-tag cl-fade-elem" data-en="GET IN TOUCH" data-ur="ہم سے رابطہ کریں">GET IN TOUCH</span>
-          <h1 class="cl-hero-title cl-fade-elem">
-            <span class="cl-hero-title-solid" data-en="Contact" data-ur="ہم سے">Contact</span>
-            <span class="cl-hero-title-outline" data-en="Us" data-ur="رابطہ">Us</span>
-          </h1>
-          <p class="cl-hero-desc cl-fade-elem"
-            data-en="Dedicated to making nation builders through academic excellence and spiritual training. Connect with our admissions team for inquiries, curriculum details, or campus visits."
-            data-ur="اعلیٰ تعلیمی معیار اور روحانی تربیت کے ذریعے معمارانِ قوم کی تیاری۔ داخلہ، نصاب اور کیمپس وزٹ کے لیے ہماری ٹیم سے رابطہ کریں۔">
-            Dedicated to making nation builders through academic excellence and spiritual training. Connect with our admissions team for inquiries, curriculum details, or campus visits.
-          </p>
-          <div class="cl-hero-actions cl-fade-elem">
-            <a href="#contact-details" class="btn cl-btn-white" data-en="Send Message" data-ur="پیغام بھیجیں">
-              Send Message
+      <!-- Caption Panel, Anchored to Bottom -->
+      <div class="hero-panel-wrap">
+        <div class="hero-panel">
+          <!-- Left: Eyebrow + H1 Title -->
+          <div class="hero-panel__title-col">
+            <span class="hero-panel__eyebrow" data-en="GET IN TOUCH" data-ur="ہم سے رابطہ کریں">GET IN TOUCH</span>
+            <h1 class="hero-panel__title" id="contact-hero-title" data-en="Contact Us" data-ur="ہم سے رابطہ">Contact Us</h1>
+          </div>
+
+          <!-- Middle: One-Sentence Summary -->
+          <div class="hero-panel__summary-col">
+            <p class="hero-panel__summary" data-en="We welcome parents and guardians to visit our campus or connect with our team." data-ur="ہم والدین اور سرپرستوں کو کیمپس وزٹ اور رہنمائی کے لیے خوش آمدید کہتے ہیں۔">
+              We welcome parents and guardians to visit our campus or connect with our team.
+            </p>
+          </div>
+
+          <!-- Right: Buttons -->
+          <div class="hero-panel__actions-col">
+            <a href="#contact-details" class="hero-btn hero-btn--primary">
+              <span class="hero-btn__text" data-en="Send Message" data-ur="پیغام بھیجیں">Send Message</span>
+              <span class="hero-btn__arrow" aria-hidden="true">→</span>
             </a>
-            <a href="tel:+923145075399" class="btn cl-btn-outline" data-en="Call Admissions Desk" data-ur="داخلہ دفتر کو کال کریں">
-              Call Admissions Desk
+            <a href="tel:+923145075399" class="hero-btn hero-btn--secondary">
+              <span class="hero-btn__text" data-en="Call Admissions Desk" data-ur="داخلہ ڈیسک پر کال کریں">Call Admissions Desk</span>
             </a>
           </div>
         </div>
@@ -506,10 +508,10 @@
     </div>
   </div>
 
-  <script src="assets/js/siteContent.js?v=2070"></script>
+  <script src="assets/js/siteContent.js?v=2080"></script>
   <script src="assets/js/page-gateway.js?v=2063"></script>
   <script src="assets/js/toast.js?v=2046"></script>
   <script src="assets/js/analytics.js?v=2046" defer></script>
-  <script src="assets/js/app.js?v=2072"></script>
+  <script src="assets/js/app.js?v=2080"></script>
 </body>
 </html>
