@@ -674,8 +674,8 @@ function initChatbot() {
 
       if (!matchedResponse) {
         matchedResponse = document.documentElement.getAttribute("lang") === "ur"
-          ? "آپ کے سوال کا شکریہ! برائے مہربانی مزید معلومات کے لیے ہمارے واٹس ایپ نمبر 0300-1234567 پر رابطہ کریں یا ہمارے کیمپس پپلی روڈ بلکسر تشریف لائیں۔"
-          : "Thank you for reaching out! For detailed queries regarding this, please WhatsApp our admissions desk at +92 300 1234567 or visit our campus on Pipli Road, Balkasar.";
+          ? "آپ کے سوال کا شکریہ! برائے مہربانی مزید معلومات کے لیے ہمارے واٹس ایپ نمبر 0314-5075399 پر رابطہ کریں یا ہمارے کیمپس پپلی روڈ بلکسر تشریف لائیں۔"
+          : "Thank you for reaching out! For detailed queries regarding this, please WhatsApp our admissions desk at +92 314 5075399 or visit our campus on Pipli Road, Balkasar.";
       }
 
       appendMessage(matchedResponse, "bot");
@@ -3103,6 +3103,17 @@ function initCampusSkylineFooter() {
     const whatsappBtn = footer.querySelector("#footerWhatsappCta");
     if (whatsappBtn && info.contact && info.contact.whatsappNumber) {
       whatsappBtn.href = `https://wa.me/${info.contact.whatsappNumber}?text=Assalam-o-Alaikum,%20I%20would%20like%20to%20inquire%20about%20admissions%20at%20Hadi%20Education%20System.`;
+    }
+
+    if (info.socialLinks) {
+      const fbLink = footer.querySelector(".footer-social-fb");
+      if (fbLink && info.socialLinks.facebook) fbLink.href = info.socialLinks.facebook;
+      const instaLink = footer.querySelector(".footer-social-insta");
+      if (instaLink && info.socialLinks.instagram) instaLink.href = info.socialLinks.instagram;
+      const ytLink = footer.querySelector(".footer-social-yt");
+      if (ytLink && info.socialLinks.youtube) ytLink.href = info.socialLinks.youtube;
+      const waLink = footer.querySelector(".footer-social-wa");
+      if (waLink && info.socialLinks.whatsapp) waLink.href = info.socialLinks.whatsapp;
     }
 
     const roadLink = footer.querySelector("#footerAddressRoad");

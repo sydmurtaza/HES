@@ -23,19 +23,19 @@ const siteContent = {
       googleMapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d4736.191732055794!2d72.63648601335187!3d32.92477550344755!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x39208b124a0eb025%3A0x46f700f2b53554cf!2sHadi%20Education%20system%20Balkasar!5e0!3m2!1sen!2s!4v1740821993473!5m2!1sen!2s"
     },
     contact: {
-      phone: "+92 300 1234567",
-      phoneDisplay: "+92 (300) 123-4567",
-      whatsappNumber: "923001234567",
+      phone: "+92 314 5075399",
+      phoneDisplay: "+92 314 5075399",
+      whatsappNumber: "923145075399",
       email: "info@hes.com.pk",
       admissionsEmail: "admissions@hes.com.pk",
       officeHoursEn: "Monday - Saturday: 7:45 AM - 2:00 PM (Friday: 7:45 AM - 12:30 PM)",
       officeHoursUr: "پیر تا ہفتہ: صبح 7:45 تا دوپہر 2:00 بجے (جمعہ: 7:45 تا 12:30)"
     },
     socialLinks: {
-      facebook: "https://facebook.com/hadieducationsystem",
-      youtube: "https://youtube.com/@hadieducation",
-      instagram: "https://instagram.com/hes.chakwal",
-      whatsapp: "https://wa.me/923001234567?text=Assalam-o-Alaikum,%20I%20would%20like%20to%20inquire%20about%20admissions%20at%20Hadi%20Education%20System."
+      facebook: "https://www.facebook.com/hadieducationsystem",
+      youtube: "https://www.youtube.com/@hadieducationsystembalkasar",
+      instagram: "https://www.instagram.com/hes.chakwal",
+      whatsapp: "https://wa.me/923145075399?text=Assalam-o-Alaikum,%20I%20would%20like%20to%20inquire%20about%20admissions%20at%20Hadi%20Education%20System."
     }
   },
 
@@ -473,8 +473,8 @@ const siteContent = {
     },
     {
       triggerWords: ["contact", "phone", "location", "address", "map", "timing"],
-      responseEn: "We are located at Pipli Road, Balkasar, District Chakwal. Contact us via phone at +92 300 1234567 or email info@hes.com.pk. Office hours: 7:45 AM - 2:00 PM.",
-      responseUr: "ہمارا پتہ: پپلی روڈ، بلکسر، ضلع چکوال۔ رابطہ فون: 0300-1234567، دفتری اوقات: صبح 7:45 تا دوپہر 2:00 بجے۔"
+      responseEn: "We are located at Pipli Road, Balkasar, District Chakwal. Contact us via phone/WhatsApp at +92 314 5075399 or email info@hes.com.pk. Office hours: 7:45 AM - 2:00 PM.",
+      responseUr: "ہمارا پتہ: پپلی روڈ، بلکسر، ضلع چکوال۔ رابطہ فون/واٹس ایپ: 0314-5075399، دفتری اوقات: صبح 7:45 تا دوپہر 2:00 بجے۔"
     }
   ],
 
