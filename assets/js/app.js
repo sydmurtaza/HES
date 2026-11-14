@@ -3135,20 +3135,48 @@ function initCampusSkylineFooter() {
     });
   });
 
-  // 3. Responsive native details/summary accordions on phone (closed by default on mobile)
+  // 3. Responsive native details/summary exclusive accordions on mobile (closed by default on mobile)
   const linkGroups = footer.querySelectorAll(".footer-link-group");
   const mediaQuery = window.matchMedia("(max-width: 768px)");
 
   function applyAccordionState(e) {
     const isMobile = e.matches;
     linkGroups.forEach(group => {
+      const summary = group.querySelector("summary");
       if (isMobile) {
         group.removeAttribute("open");
+        group.setAttribute("name", "hes-footer-accordion");
+        if (summary) summary.setAttribute("aria-expanded", "false");
       } else {
+        group.removeAttribute("name");
         group.setAttribute("open", "");
+        if (summary) summary.setAttribute("aria-expanded", "true");
       }
     });
   }
+
+  linkGroups.forEach(group => {
+    const summary = group.querySelector("summary");
+    group.addEventListener("toggle", () => {
+      const isOpen = group.hasAttribute("open");
+      if (summary) {
+        summary.setAttribute("aria-expanded", isOpen ? "true" : "false");
+      }
+      // On mobile viewports, automatically close any other accordion section that is open
+      if (isOpen && mediaQuery.matches) {
+        linkGroups.forEach(other => {
+          if (other !== group && other.hasAttribute("open")) {
+            other.removeAttribute("open");
+            const otherSummary = other.querySelector("summary");
+            if (otherSummary) {
+              otherSummary.setAttribute("aria-expanded", "false");
+            }
+          }
+        });
+      }
+    });
+  });
+
   applyAccordionState(mediaQuery);
   if (typeof mediaQuery.addEventListener === "function") {
     mediaQuery.addEventListener("change", applyAccordionState);
