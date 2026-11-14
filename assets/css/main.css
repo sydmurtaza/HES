@@ -11870,7 +11870,7 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 .footer-skyline .footer-sign-off em,
 .footer-skyline .footer-sign-off i {
   font-style: italic;
-  font-weight: 400;
+  font-weight: 500;
 }
 
 [dir="rtl"] .footer-skyline .footer-sign-off,
@@ -12342,11 +12342,13 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
     line-height: 1.25 !important;
     max-width: 100% !important;
     margin-block-end: 24px !important;
+    text-align: left !important;
   }
 
   [dir="rtl"] .footer-skyline .footer-sign-off,
   [lang="ur"] .footer-skyline .footer-sign-off {
     line-height: 1.8 !important;
+    text-align: right !important;
   }
 
   /* 3. Full-width WhatsApp Pill CTA Button */
@@ -12469,7 +12471,7 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
     height: 120px !important;
   }
 
-  /* 7. Legal Strip: Centered Single Line */
+  /* 7. Legal Strip: Left Aligned Single Line */
   .footer-skyline .footer-legal-strip {
     border-block-start: none !important;
     padding-block: 20px !important;
@@ -12484,16 +12486,27 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   }
 
   .footer-skyline .footer-legal-container {
-    justify-content: center !important;
-    text-align: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     padding-inline: 24px !important;
     padding-block: 16px !important;
   }
 
   .footer-skyline .footer-legal-copyright {
-    text-align: center !important;
+    text-align: left !important;
     margin: 0 !important;
     font-size: 0.88rem !important;
+  }
+
+  [dir="rtl"] .footer-skyline .footer-legal-container,
+  [lang="ur"] .footer-skyline .footer-legal-container {
+    justify-content: flex-start !important;
+    text-align: right !important;
+  }
+
+  [dir="rtl"] .footer-skyline .footer-legal-copyright,
+  [lang="ur"] .footer-skyline .footer-legal-copyright {
+    text-align: right !important;
   }
 }
 
