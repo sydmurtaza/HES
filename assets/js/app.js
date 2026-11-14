@@ -3108,8 +3108,6 @@ function initCampusSkylineFooter() {
     if (info.socialLinks) {
       const fbLink = footer.querySelector(".footer-social-fb");
       if (fbLink && info.socialLinks.facebook) fbLink.href = info.socialLinks.facebook;
-      const instaLink = footer.querySelector(".footer-social-insta");
-      if (instaLink && info.socialLinks.instagram) instaLink.href = info.socialLinks.instagram;
       const ytLink = footer.querySelector(".footer-social-yt");
       if (ytLink && info.socialLinks.youtube) ytLink.href = info.socialLinks.youtube;
       const waLink = footer.querySelector(".footer-social-wa");
