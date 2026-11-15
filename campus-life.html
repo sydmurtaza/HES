@@ -56,7 +56,7 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="assets/css/page-gateway.css?v=2063">
-  <link rel="stylesheet" href="assets/css/main.css?v=2081">
+  <link rel="stylesheet" href="assets/css/main.css?v=2084">
 </head>
 
 <body class="page-campus-life">
@@ -83,12 +83,6 @@
       </nav>
 
       <div class="header-actions">
-        <!-- Admissions Status Pill Badge -->
-        <a href="admission.html?v=2046" class="nav-status-badge" aria-label="Admissions Status">
-          <span class="nav-pulse-dot" aria-hidden="true"></span>
-          <span data-en="Admissions Open" data-ur="داخلے جاری ہیں">Admissions Open</span>
-        </a>
-
         <!-- Apply CTA -->
         <a href="admission.html?v=2046" class="btn header-cta" data-en="Apply Now →" data-ur="آن لائن داخلہ لیں →">
           Apply Now <span class="cta-arrow" aria-hidden="true">→</span>
@@ -537,10 +531,14 @@
     </section>
 
     <!-- =========================================================================
-         SECTION 5: CAMPUS VIDEO SHOWCASE: LIFE IN MOTION (Light Gray Background)
+         SECTION 5: CAMPUS VIDEO SHOWCASE: LIFE IN MOTION ("Reel Theatre" Redesign)
          ========================================================================= -->
-    <section class="section cl-videos-section" id="campus-videos" aria-label="Campus Life Video Showcase">
+    <section class="section cl-videos-section cl-reels" id="campus-videos" aria-label="Campus Life Video Showcase" data-state="idle">
       <div class="container">
+        <!-- Visually Hidden Screen Reader Announcer -->
+        <div class="cl-sr-announcer sr-only" id="clAnnouncer" aria-live="polite" aria-atomic="true"></div>
+
+        <!-- Section Intro Copy (Preserved exactly as required) -->
         <div class="cl-videos-header">
           <div class="cl-videos-header-copy">
             <span class="cl-sub-tag" data-en="LIFE IN MOTION" data-ur="ویڈیوز • کیمپس لائف">LIFE IN MOTION</span>
@@ -551,87 +549,186 @@
           </div>
         </div>
 
-        <div class="cl-video-showcase-grid">
-          <!-- Main Grand Video Player -->
-          <div class="cl-video-main-card">
-            <div class="cl-video-player-wrap">
-              <video id="clMainVideoPlayer" class="cl-main-video" controls playsinline preload="none" poster="media/poster_sports_week.jpg">
-                <source id="clMainVideoSource" src="media/cl_sports_week_2025.mp4" type="video/mp4">
-                Your browser does not support HTML5 video.
-              </video>
-            </div>
-            <div class="cl-video-main-info">
-              <div class="cl-video-main-meta">
-                <span class="cl-video-badge" id="clMainVideoBadge" data-en="OFFICIAL FILM • 2:40 MIN" data-ur="آفیشل فلم • 2:40 منٹ">OFFICIAL FILM • 2:40 MIN</span>
-                <span class="cl-video-location" data-en="Balkasar Campus" data-ur="بلکسر کیمپس">Balkasar Campus</span>
+        <!-- Noscript fallback for zero JavaScript -->
+        <noscript>
+          <div class="cl-noscript">
+            <div class="cl-noscript-grid">
+              <div class="cl-noscript-card">
+                <video controls preload="none" poster="media/poster_sports_week.jpg">
+                  <source src="media/cl_sports_week_2025.mp4" type="video/mp4">
+                </video>
+                <h4>Sports Week 2025: Official Film</h4>
               </div>
-              <h3 class="cl-video-main-title" id="clMainVideoTitle" data-en="Sports Week 2025 — Official Highlights Film" data-ur="اسپورٹس ویک 2025 — آفیشل ہائی لائٹس فلم">Sports Week 2025 — Official Highlights Film</h3>
-              <p class="cl-video-main-desc" id="clMainVideoDesc" data-en="Experience the vibrant athletic spirit, track sprints, team matches, and opening ceremony of Sports Week 2025 at Hadi Education System Balkasar." data-ur="ہادی ایجوکیشن سسٹم بلکسر کے اسپورٹس ویک 2025 کی افتتاحی تقریب، اسپورٹس میچز اور پرجوش لمحات کا آنکھوں دیکھا احوال۔">
-                Experience the vibrant athletic spirit, track sprints, team matches, and opening ceremony of Sports Week 2025 at Hadi Education System Balkasar.
-              </p>
+              <div class="cl-noscript-card">
+                <video controls preload="none" poster="media/poster_sports_gala.jpg">
+                  <source src="media/cl_sports_gala_ceremony.mp4" type="video/mp4">
+                </video>
+                <h4>Prize Distribution Ceremony</h4>
+              </div>
+              <div class="cl-noscript-card">
+                <video controls preload="none" poster="media/poster_museum_excursion.jpg">
+                  <source src="media/cl_museum_excursion.mp4" type="video/mp4">
+                </video>
+                <h4>Museum & Heritage Study Tour</h4>
+              </div>
+              <div class="cl-noscript-card">
+                <video controls preload="none" poster="media/poster_team_huddle.jpg">
+                  <source src="media/cl_team_huddle.mp4" type="video/mp4">
+                </video>
+                <h4>Team Huddle & Brotherhood</h4>
+              </div>
+            </div>
+          </div>
+        </noscript>
+
+        <!-- Zero films fallback placeholder -->
+        <div class="cl-empty" id="clEmptyState" style="display:none;" data-en="Films are coming soon." data-ur="ویڈیوز جلد دستیاب ہوں گی۔">Films are coming soon.</div>
+
+        <!-- Contained Black Panel: Reel Theatre -->
+        <div class="cl-panel" id="clPanel">
+          <!-- Top Bar: Label & Filter Chips -->
+          <div class="cl-panel__head">
+            <span class="cl-label" data-en="WATCH THE REELS" data-ur="ریلز دیکھیں">WATCH THE REELS</span>
+            <div class="cl-chips" role="tablist" aria-label="Reel Categories">
+              <button type="button" class="cl-chip is-active" role="tab" aria-selected="true" data-filter="all" data-en="All" data-ur="تمام">All</button>
+              <button type="button" class="cl-chip" role="tab" aria-selected="false" data-filter="sports-week" data-en="Sports Week" data-ur="اسپورٹس ویک">Sports Week</button>
+              <button type="button" class="cl-chip" role="tab" aria-selected="false" data-filter="ceremonies" data-en="Ceremonies" data-ur="تقریبات">Ceremonies</button>
+              <button type="button" class="cl-chip" role="tab" aria-selected="false" data-filter="excursions" data-en="Excursions" data-ur="مطالعاتی دورے">Excursions</button>
+              <button type="button" class="cl-chip" role="tab" aria-selected="false" data-filter="athletic-spirit" data-en="Athletic Spirit" data-ur="کھیل کا جذبہ">Athletic Spirit</button>
             </div>
           </div>
 
-          <!-- Video Playlist Sidebar -->
-          <div class="cl-video-playlist" role="region" aria-label="Campus Video Playlist">
-            <h4 class="cl-playlist-heading" data-en="Select Film to Watch" data-ur="ویڈیو کا انتخاب کریں">Select Film to Watch</h4>
+          <!-- Desktop / Tablet Theatre Grid -->
+          <div class="cl-theatre">
+            <!-- Left Column: Stage Frame -->
+            <div class="cl-stage-col">
+              <div class="cl-ambient" aria-hidden="true"></div>
+              <div class="cl-stage" id="clStage" tabindex="0" role="region" aria-label="Reel Video Player Stage" data-state="paused">
+                <!-- Main Stage Video -->
+                <video id="clStageVideo" class="cl-stage-video" playsinline webkit-playsinline="true" preload="metadata" poster="media/poster_sports_week.jpg">
+                  <source id="clStageSource" src="media/cl_sports_week_2025.mp4" type="video/mp4">
+                  Your browser does not support HTML5 video.
+                </video>
 
-            <!-- Playlist Item 1 (Active) -->
-            <button type="button" class="cl-playlist-item is-active" data-video-src="media/cl_sports_week_2025.mp4" data-poster="media/poster_sports_week.jpg" data-badge-en="OFFICIAL FILM • 2:40 MIN" data-badge-ur="آفیشل فلم • 2:40 منٹ" data-title-en="Sports Week 2025 — Official Highlights Film" data-title-ur="اسپورٹس ویک 2025 — آفیشل ہائی لائٹس فلم" data-desc-en="Experience the vibrant athletic spirit, track sprints, team matches, and opening ceremony of Sports Week 2025 at Hadi Education System Balkasar." data-desc-ur="ہادی ایجوکیشن سسٹم بلکسر کے اسپورٹس ویک 2025 کی افتتاحی تقریب، اسپورٹس میچز اور پرجوش لمحات کا آنکھوں دیکھا احوال۔">
-              <div class="cl-playlist-thumb">
-                <img src="media/poster_sports_week.jpg" alt="Sports Week 2025" loading="lazy">
-                <span class="cl-thumb-play-icon" aria-hidden="true">▶</span>
-                <span class="cl-thumb-dur">2:40</span>
+                <!-- Full-size Tap Layer with optically centered Play Button -->
+                <div class="cl-tap" id="clStageTap" role="button" tabindex="0" aria-label="Play">
+                  <div class="cl-tap-btn" id="clStageTapBtn" aria-hidden="true">
+                    <svg class="cl-tap-icon" viewBox="0 0 24 24" width="32" height="32" fill="#14213D" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+                  </div>
+                </div>
+
+                <!-- Story Progress Bars at Top -->
+                <div class="cl-bars" id="clStoryBars" aria-hidden="true"></div>
+
+                <!-- Category Tag (Top Left) -->
+                <div class="cl-tag" id="clStageTag" data-en="SPORTS WEEK" data-ur="اسپورٹس ویک">SPORTS WEEK</div>
+
+                <!-- Simple Speaker Mute Button (Top Right) -->
+                <button type="button" class="cl-mute" id="clStageMute" aria-label="Unmute">
+                  <svg class="cl-icon-muted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
+                  <svg class="cl-icon-unmuted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                </button>
+
+                <!-- Plain Loading Spinner -->
+                <div class="cl-spinner" id="clStageSpinner" aria-hidden="true">
+                  <div class="cl-spinner-ring"></div>
+                </div>
+
+                <!-- State Overlay (Stalled / Error / Offline) -->
+                <div class="cl-state-overlay" id="clStageStateOverlay" style="display:none;">
+                  <p class="cl-state-text" id="clStageStateText"></p>
+                  <div class="cl-state-actions">
+                    <button type="button" class="cl-state-retry" id="clStageStateRetry" data-en="Retry" data-ur="دوبارہ کوشش کریں">Retry</button>
+                    <a href="media/cl_sports_week_2025.mp4" target="_blank" rel="noopener noreferrer" class="cl-state-openlink" id="clStageStateOpenLink" style="display:none;" data-en="Open video" data-ur="ویڈیو کھولیں">Open video</a>
+                  </div>
+                </div>
+
+                <!-- Bottom Scrim Overlay -->
+                <div class="cl-stage-bottom">
+                  <h4 class="cl-caption" id="clStageCaption">Sports Week 2025: Official Film</h4>
+                  <div class="cl-time-row">
+                    <span class="cl-time" id="clStageTime">0:00 / 2:40</span>
+                  </div>
+                  <div class="cl-seek" id="clStageSeek" role="slider" aria-label="Seek video" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" tabindex="0">
+                    <div class="cl-seek-track">
+                      <div class="cl-seek-fill" id="clStageSeekFill"></div>
+                    </div>
+                    <div class="cl-seek-thumb" id="clStageSeekThumb"></div>
+                  </div>
+                </div>
               </div>
-              <div class="cl-playlist-meta">
-                <span class="cl-playlist-tag" data-en="Sports Week" data-ur="اسپورٹس ویک">Sports Week</span>
-                <h5 class="cl-playlist-title" data-en="Sports Week 2025: Official Film" data-ur="اسپورٹس ویک 2025: آفیشل فلم">Sports Week 2025: Official Film</h5>
-                <span class="cl-playlist-sub" data-en="Athletic competitions &amp; grand ceremony" data-ur="افتتاحی تقریب اور مقابلے">Athletic competitions &amp; grand ceremony</span>
+            </div>
+
+            <!-- Vertical Up / Down Navigation directly to right of stage, vertically centred -->
+            <div class="cl-nav" id="clDesktopNav" aria-label="Reels navigation">
+              <button type="button" class="cl-nav-btn cl-nav-up" id="clNavPrev" aria-label="Previous reel" aria-disabled="true">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"></polyline></svg>
+              </button>
+              <button type="button" class="cl-nav-btn cl-nav-down" id="clNavNext" aria-label="Next reel" aria-disabled="false">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"></polyline></svg>
+              </button>
+            </div>
+
+            <!-- Right Column: Info, CTAs & More Reels Row -->
+            <div class="cl-info">
+              <div class="cl-meta">
+                <span class="cl-badge" id="clInfoBadge" data-en="OFFICIAL FILM · 2:40 MIN" data-ur="آفیشل فلم · 2:40 منٹ">OFFICIAL FILM · 2:40 MIN</span>
+                <span class="cl-location" data-en="Balkasar Campus" data-ur="بلکسر کیمپس">Balkasar Campus</span>
               </div>
+              <h3 class="cl-title" id="clInfoTitle">Sports Week 2025: Official Film</h3>
+              <p class="cl-desc" id="clInfoDesc">Experience the vibrant athletic spirit, track sprints, team matches, and opening ceremony of Sports Week 2025 at Hadi Education System Balkasar.</p>
+
+              <!-- Action Buttons -->
+              <div class="cl-actions">
+                <button type="button" class="cl-btn-share" id="clBtnShare" aria-label="Share">
+                  <span class="cl-btn-text" data-en="Share" data-ur="شیئر کریں">Share</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                </button>
+                <button type="button" class="cl-btn-fullscreen" id="clBtnFullscreen" aria-label="Full screen">
+                  <span class="cl-btn-text" data-en="Full screen" data-ur="فل اسکرین">Full screen</span>
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                </button>
+                <!-- Fallback selectable link container if clipboard denied -->
+                <div class="cl-share-fallback" id="clShareFallback" style="display:none;">
+                  <input type="text" class="cl-share-input" id="clShareInput" readonly aria-label="Reel Link">
+                </div>
+              </div>
+
+              <div class="cl-divider" aria-hidden="true"></div>
+
+              <!-- More Reels Section -->
+              <div class="cl-more-head">
+                <span class="cl-more-label" data-en="MORE REELS" data-ur="مزید ریلز">MORE REELS</span>
+                <span class="cl-more-count" id="clMoreCount">4 films</span>
+              </div>
+              <div class="cl-cards" id="clCardsRow" role="list" aria-label="Reels list"></div>
+            </div>
+          </div>
+
+          <!-- Phone View: 2-Column Grid (Hidden on Desktop/Tablet via CSS) -->
+          <div class="cl-phone-grid" id="clPhoneGrid" role="list" aria-label="Campus Reels Grid"></div>
+        </div>
+      </div>
+
+      <!-- Phone Fullscreen Reel Viewer Modal (Instagram Reels Style) -->
+      <div class="cl-viewer" id="clPhoneViewer" role="dialog" aria-modal="true" aria-label="Reel Viewer" hidden>
+        <!-- Top Fixed Controls -->
+        <div class="cl-viewer-top">
+          <div class="cl-viewer-bars" id="clViewerBars" aria-hidden="true"></div>
+          <div class="cl-viewer-top-actions">
+            <button type="button" class="cl-viewer-close" id="clViewerClose" aria-label="Close">
+              <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
             </button>
-
-            <!-- Playlist Item 2 -->
-            <button type="button" class="cl-playlist-item" data-video-src="media/cl_sports_gala_ceremony.mp4" data-poster="media/poster_sports_gala.jpg" data-badge-en="PRIZE CEREMONY • 1:27 MIN" data-badge-ur="تقسیمِ انعامات • 1:27 منٹ" data-title-en="Sports Gala Prize Distribution Ceremony" data-title-ur="اسپورٹس گالا تقریبِ تقسیمِ انعامات" data-desc-en="Celebrating student champions, medal presentations, trophies, and the victory safari drive across campus grounds." data-desc-ur="طالب علموں میں گولڈ میڈلز، ٹرافیاں اور کیمپس میں فتح کا جشن۔">
-              <div class="cl-playlist-thumb">
-                <img src="media/poster_sports_gala.jpg" alt="Prize Distribution Ceremony" loading="lazy">
-                <span class="cl-thumb-play-icon" aria-hidden="true">▶</span>
-                <span class="cl-thumb-dur">1:27</span>
-              </div>
-              <div class="cl-playlist-meta">
-                <span class="cl-playlist-tag" data-en="Ceremonies" data-ur="تقریبات">Ceremonies</span>
-                <h5 class="cl-playlist-title" data-en="Prize Distribution Ceremony" data-ur="تقسیمِ انعامات و اسپورٹس گالا">Prize Distribution Ceremony</h5>
-                <span class="cl-playlist-sub" data-en="Trophies, gold medals &amp; victory safari" data-ur="ٹرافیاں، میڈلز اور جشن">Trophies, gold medals &amp; victory safari</span>
-              </div>
-            </button>
-
-            <!-- Playlist Item 3 -->
-            <button type="button" class="cl-playlist-item" data-video-src="media/cl_museum_excursion.mp4" data-poster="media/poster_museum_excursion.jpg" data-badge-en="STUDY TOUR • 2:02 MIN" data-badge-ur="مطالعاتی دورہ • 2:02 منٹ" data-title-en="Historic Museum &amp; Heritage Study Excursion" data-title-ur="تاریخی عجائب گھر و مطالعاتی دورہ" data-desc-en="Follow our students on their guided historical and scientific study excursion broadening experiential horizons." data-desc-ur="طالب علموں کا تاریخی عجائب گھر کا معلوماتی اور تعلیمی مطالعاتی دورہ۔">
-              <div class="cl-playlist-thumb">
-                <img src="media/poster_museum_excursion.jpg" alt="Museum Study Tour" loading="lazy">
-                <span class="cl-thumb-play-icon" aria-hidden="true">▶</span>
-                <span class="cl-thumb-dur">2:02</span>
-              </div>
-              <div class="cl-playlist-meta">
-                <span class="cl-playlist-tag" data-en="Excursions" data-ur="مطالعاتی دورے">Excursions</span>
-                <h5 class="cl-playlist-title" data-en="Museum &amp; Heritage Study Tour" data-ur="عجائب گھر مطالعاتی دورہ">Museum &amp; Heritage Study Tour</h5>
-                <span class="cl-playlist-sub" data-en="Field study and student excursion" data-ur="تاریخی و سائنسی مشاہدات">Field study and student excursion</span>
-              </div>
-            </button>
-
-            <!-- Playlist Item 4 -->
-            <button type="button" class="cl-playlist-item" data-video-src="media/cl_team_huddle.mp4" data-poster="media/poster_team_huddle.jpg" data-badge-en="ATHLETICS • 0:08 MIN" data-badge-ur="کھیل و یکجہتی • 0:08 منٹ" data-title-en="Team Huddle &amp; Brotherhood on the Field" data-title-ur="کھیل کے میدان میں ٹیم یکجہتی" data-desc-en="Team unity, brotherhood, and competitive spirit before stepping onto the playing arena." data-desc-ur="کھیل کے میدان میں اترنے سے قبل ٹیم کا باہمی اتحاد اور جذبہ۔">
-              <div class="cl-playlist-thumb">
-                <img src="media/poster_team_huddle.jpg" alt="Team Huddle" loading="lazy">
-                <span class="cl-thumb-play-icon" aria-hidden="true">▶</span>
-                <span class="cl-thumb-dur">0:08</span>
-              </div>
-              <div class="cl-playlist-meta">
-                <span class="cl-playlist-tag" data-en="Athletic Spirit" data-ur="کھیل کا جذبہ">Athletic Spirit</span>
-                <h5 class="cl-playlist-title" data-en="Team Huddle &amp; Brotherhood" data-ur="ٹیم یکجہتی و اخوت">Team Huddle &amp; Brotherhood</h5>
-                <span class="cl-playlist-sub" data-en="Unity before entering the arena" data-ur="میدان میں اتحاد و یکجہتی">Unity before entering the arena</span>
-              </div>
+            <button type="button" class="cl-viewer-mute" id="clViewerMute" aria-label="Unmute">
+              <svg class="cl-icon-muted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
+              <svg class="cl-icon-unmuted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display:none;"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
             </button>
           </div>
+        </div>
+
+        <!-- Instagram-style 100dvh Vertical Scroll Feed -->
+        <div class="cl-viewer-feed" id="clViewerFeed" tabindex="-1">
+          <!-- Populated dynamically via JS with .cl-viewer-slide -->
         </div>
       </div>
     </section>
@@ -786,7 +883,7 @@
     </div>
   </div>
 
-  <!-- Footer -->
+
     <!-- ==========================================================================
        THE CAMPUS SKYLINE — GLOBAL SHARED FOOTER
        ========================================================================== -->
@@ -881,7 +978,6 @@
               </span>
             </summary>
             <ul class="footer-links-list">
-              <li><a href="contact.html" class="footer-nav-link" id="footerAddressRoad" data-en="Pipli Road" data-ur="پپلی روڈ">Pipli Road</a></li>
               <li><a href="contact.html" class="footer-nav-link" id="footerAddressCity" data-en="Balkasar" data-ur="بلکسر">Balkasar</a></li>
               <li><a href="contact.html" class="footer-nav-link" id="footerHoursLink" data-en="Office hours" data-ur="دفتری اوقات">Office hours</a></li>
               <li><a href="contact.html" class="footer-nav-link" data-en="Contact" data-ur="رابطہ">Contact</a></li>
@@ -920,11 +1016,11 @@
     </div>
   </div>
 
-  <script src="assets/js/siteContent.js?v=2080"></script>
+  <script src="assets/js/siteContent.js?v=2083"></script>
   <script src="assets/js/page-gateway.js?v=2063"></script>
   <script src="assets/js/toast.js?v=2046"></script>
   <script src="assets/js/analytics.js?v=2046" defer></script>
-  <script src="assets/js/app.js?v=2080"></script>
+  <script src="assets/js/app.js?v=2083"></script>
 </body>
 
 </html>

@@ -14286,3 +14286,1285 @@ html:lang(ur) .hero-btn {
   }
 }
 
+/* ==========================================================================
+   Campus Life reels — "Reel Theatre" Modern Visual Redesign & Hardened Engine
+   ========================================================================== */
+.cl-reels {
+  position: relative;
+  width: 100%;
+}
+
+.cl-sr-announcer {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Noscript Fallback */
+.cl-noscript {
+  margin: 24px auto;
+  max-width: 1200px;
+}
+.cl-noscript-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 20px;
+}
+.cl-noscript-card {
+  background: #000000;
+  border-radius: 16px;
+  padding: 16px;
+  color: #FFFFFF;
+}
+.cl-noscript-card video {
+  width: 100%;
+  border-radius: 12px;
+  aspect-ratio: 9 / 16;
+  object-fit: cover;
+  background: #14213D;
+}
+.cl-noscript-card h4 {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 16px;
+  margin-top: 12px;
+  color: #FFFFFF;
+}
+
+/* Empty State */
+.cl-empty {
+  max-width: 1200px;
+  margin: 32px auto;
+  padding: 40px;
+  background: #000000;
+  border-radius: 24px;
+  color: #E5E5E5;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 18px;
+  text-align: center;
+}
+
+/* Contained Black Panel */
+.cl-panel {
+  max-width: 1200px;
+  margin: 0 auto;
+  background: #000000;
+  border-radius: 32px;
+  padding: 40px;
+  box-sizing: border-box;
+  color: #FFFFFF;
+  position: relative;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+}
+
+.cl-panel__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.cl-label {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #E5E5E5;
+  margin: 0;
+}
+
+/* Category Filter Chips */
+.cl-chips {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.cl-chip {
+  min-height: 44px;
+  padding: 8px 20px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: #000000;
+  color: #FFFFFF;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.cl-chip:hover:not(.is-active) {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.cl-chip.is-active {
+  background: #FFFFFF;
+  border-color: #FFFFFF;
+  color: #14213D;
+  font-weight: 700;
+  box-shadow: 0 4px 16px rgba(255, 255, 255, 0.2);
+}
+
+/* DESKTOP THEATRE LAYOUT */
+.cl-theatre {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Left Column: Stage Frame */
+.cl-stage-col {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.cl-ambient {
+  position: absolute;
+  inset: -16px;
+  border-radius: 36px;
+  background: radial-gradient(circle, rgba(20, 33, 61, 0.5) 0%, transparent 70%);
+  filter: blur(24px);
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* 9:16 Video Stage Box */
+.cl-stage {
+  position: relative;
+  width: clamp(300px, 24vw, 360px);
+  aspect-ratio: 9 / 16;
+  max-height: 78svh;
+  border-radius: 28px;
+  overflow: hidden;
+  background: #14213D;
+  z-index: 2;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.7);
+  outline: none;
+}
+
+.cl-stage-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Full-size Centered Tap Layer */
+.cl-tap {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 15;
+  pointer-events: auto;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+
+.cl-tap-btn {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.92);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+  opacity: 1;
+  transition: opacity 0.6s ease, transform 0.2s ease;
+}
+
+.cl-tap-icon {
+  width: 32px;
+  height: 32px;
+  transform: translateX(2px);
+}
+
+[data-state="playing"] .cl-tap-btn {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.cl-tap-btn.is-flashing {
+  opacity: 1;
+  animation: tapFlash 0.6s ease-out forwards;
+}
+
+@keyframes tapFlash {
+  0% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.9; transform: scale(1.08); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+
+/* Story-Style Progress Bars at Top */
+.cl-bars {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  right: 14px;
+  z-index: 20;
+  display: flex;
+  gap: 4px;
+  pointer-events: none;
+  direction: ltr !important;
+}
+
+.cl-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  overflow: hidden;
+  position: relative;
+  direction: ltr !important;
+}
+
+.cl-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: #FFFFFF;
+  border-radius: 9999px;
+  transition: width 0.1s linear;
+}
+
+/* Category Tag Pill (Top Left) */
+.cl-tag {
+  position: absolute;
+  top: 26px;
+  left: 14px;
+  z-index: 20;
+  background: #14213D;
+  color: #FFFFFF;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  pointer-events: none;
+}
+
+/* Simple Mute Button (Top Right) */
+.cl-mute {
+  position: absolute;
+  top: 24px;
+  right: 14px;
+  z-index: 20;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+  padding: 0;
+}
+
+.cl-mute:hover {
+  background: rgba(0, 0, 0, 0.7);
+  transform: scale(1.05);
+}
+
+/* Loading Spinner */
+.cl-spinner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 18;
+  background: rgba(0, 0, 0, 0.35);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+
+[data-state="loading"] .cl-spinner {
+  opacity: 1;
+}
+
+.cl-spinner-ring {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(255, 255, 255, 0.25);
+  border-top-color: #FFFFFF;
+  border-radius: 50%;
+  animation: clSpin 0.8s linear infinite;
+}
+
+@keyframes clSpin {
+  to { transform: rotate(360deg); }
+}
+
+/* State Overlay (Stalled, Error, Offline) */
+.cl-state-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 25;
+  background: rgba(20, 33, 61, 0.94);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.cl-state-text {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 14px;
+  line-height: 1.5;
+  color: #E5E5E5;
+  margin: 0 0 16px;
+}
+
+.cl-state-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.cl-state-retry {
+  height: 40px;
+  padding: 0 20px;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  color: #14213D;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+}
+
+.cl-state-openlink {
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  color: #FFFFFF;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+}
+
+/* Bottom Scrim & Caption Controls */
+.cl-stage-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 48px 16px 16px;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.88) 0%, rgba(0, 0, 0, 0.5) 60%, transparent 100%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none;
+}
+
+h4.cl-caption,
+.cl-caption {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFFFFF !important;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+.cl-time-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.cl-time {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: #E5E5E5 !important;
+  flex-shrink: 0;
+  direction: ltr !important;
+}
+
+/* Custom Interactive Seek Bar */
+.cl-seek {
+  width: 100%;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  pointer-events: auto;
+  direction: ltr !important;
+}
+
+.cl-seek-track {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+  position: relative;
+}
+
+.cl-seek-fill {
+  height: 100%;
+  width: 0%;
+  background: #FFFFFF;
+  border-radius: 9999px;
+  pointer-events: none;
+}
+
+.cl-seek-thumb {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  pointer-events: none;
+}
+
+.cl-seek:hover .cl-seek-thumb,
+.cl-seek:focus-visible .cl-seek-thumb {
+  opacity: 1;
+}
+
+/* Desktop Up & Down Buttons: Vertical Stack to the Right of Stage, Vertically Centred */
+.cl-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-self: center;
+  flex-shrink: 0;
+  margin-inline: 0 24px;
+}
+
+.cl-nav-btn {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #14213D;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.cl-nav-btn:hover:not([aria-disabled="true"]):not(:disabled) {
+  border-color: rgba(255, 255, 255, 0.6);
+  transform: scale(1.06);
+}
+
+.cl-nav-btn[aria-disabled="true"],
+.cl-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Right Column: Info & More Reels */
+.cl-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 8px 0;
+  min-width: 0;
+}
+
+.cl-meta {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.cl-badge {
+  background: #14213D;
+  color: #FFFFFF;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 6px 14px;
+  border-radius: 9999px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+}
+
+.cl-location {
+  color: #E5E5E5;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+h3.cl-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: clamp(26px, 2.5vw, 38px);
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1.22;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+p.cl-desc {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 16px;
+  line-height: 1.65;
+  color: #E5E5E5;
+  margin: 0;
+  max-width: 580px;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.cl-actions {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.cl-btn,
+.cl-btn-share,
+.cl-btn-fullscreen,
+.cl-btn-fs {
+  height: 44px;
+  min-height: 44px;
+  border-radius: 9999px;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  padding: 0 24px;
+}
+
+.cl-btn-share {
+  background: #FFFFFF;
+  color: #14213D !important;
+  font-weight: 700;
+  border: 1px solid #FFFFFF;
+}
+
+.cl-btn-share:hover {
+  transform: translateY(-1px);
+  background: #E5E5E5;
+  box-shadow: 0 6px 18px rgba(255, 255, 255, 0.25);
+}
+
+.cl-btn-fullscreen,
+.cl-btn-fs {
+  background: transparent;
+  color: #FFFFFF !important;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  font-weight: 600;
+}
+
+.cl-btn-fullscreen:hover,
+.cl-btn-fs:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #FFFFFF;
+  transform: translateY(-1px);
+}
+
+.cl-share-fallback {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.cl-share-input {
+  width: 100%;
+  max-width: 380px;
+  height: 38px;
+  background: #14213D;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  color: #FFFFFF;
+  padding: 0 12px;
+  font-size: 13px;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+}
+
+.cl-divider {
+  border-top: 1px solid rgba(255, 255, 255, 0.20);
+  width: 100%;
+  margin: 6px 0;
+}
+
+.cl-more-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.cl-more-label {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.cl-more-count {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 13px;
+  color: #E5E5E5;
+}
+
+/* More Reels Card Row (Desktop) */
+.cl-cards {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: none;
+}
+
+.cl-cards::-webkit-scrollbar {
+  display: none;
+}
+
+.cl-card {
+  width: 96px;
+  flex-shrink: 0;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  color: #FFFFFF;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.cl-card.is-dimmed {
+  display: none;
+}
+
+.cl-card-thumb {
+  width: 96px;
+  aspect-ratio: 9 / 16;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #14213D;
+  box-sizing: border-box;
+}
+
+.cl-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.cl-card-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.55);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.cl-card:hover .cl-card-play {
+  opacity: 1;
+}
+
+.cl-card-dur {
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  background: rgba(0, 0, 0, 0.75);
+  color: #FFFFFF;
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.cl-card-title {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 12px;
+  line-height: 1.35;
+  color: #E5E5E5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.cl-card.is-active .cl-card-thumb {
+  border: 2px solid #FFFFFF;
+  outline: 2px solid #FFFFFF;
+  outline-offset: 2px;
+}
+
+.cl-phone-grid {
+  display: none;
+}
+
+/* ==========================================================================
+   PHONE FULLSCREEN INSTAGRAM-STYLE REEL VIEWER (< 768px)
+   ========================================================================== */
+.cl-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 999999 !important;
+  background: #000000;
+  width: 100vw;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.cl-viewer[hidden] {
+  display: none !important;
+}
+
+body.reel-viewer-open .navbar {
+  display: none !important;
+}
+
+body.reel-viewer-open {
+  overflow: hidden !important;
+}
+
+/* Top Fixed Controls in Phone Viewer */
+.cl-viewer-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  padding: calc(env(safe-area-inset-top, 16px) + 8px) 16px 16px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.75) 0%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  pointer-events: none;
+}
+
+.cl-viewer-top .cl-viewer-bars {
+  display: flex;
+  gap: 4px;
+  width: 100%;
+  direction: ltr !important;
+}
+
+.cl-viewer-top-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: auto;
+}
+
+.cl-viewer-close,
+.cl-viewer-mute {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  pointer-events: auto;
+  padding: 0;
+}
+
+.cl-viewer-close:hover,
+.cl-viewer-mute:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+}
+
+/* Native Instagram-Style Vertical Snap Feed */
+.cl-viewer-feed {
+  height: 100dvh;
+  min-height: 100vh;
+  width: 100%;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: contain;
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  background: #000000;
+}
+
+.cl-viewer-feed::-webkit-scrollbar {
+  display: none;
+}
+
+/* 1 Full Page per Reel Slide */
+.cl-viewer-slide {
+  height: 100dvh;
+  min-height: 100vh;
+  width: 100%;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+  position: relative;
+  overflow: hidden;
+  background: #000000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cl-slide-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  max-height: 100dvh;
+}
+
+/* Floating Vertical Action Rail (Right Side) */
+.cl-rail {
+  position: absolute;
+  right: 16px;
+  bottom: calc(env(safe-area-inset-bottom, 16px) + 120px);
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+.cl-rail-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  padding: 0;
+}
+
+.cl-rail-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.05);
+}
+
+/* Phone Viewer Bottom Overlay */
+.cl-viewer-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 30;
+  padding: 32px 16px calc(env(safe-area-inset-bottom, 16px) + 16px);
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.92) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.cl-viewer-bottom .cl-tag {
+  position: static !important;
+  top: auto;
+  left: auto;
+  margin-bottom: 2px;
+}
+
+.cl-viewer-title {
+  font-family: var(--font-serif, "Lora", serif);
+  font-size: 18px;
+  font-weight: 600;
+  color: #FFFFFF !important;
+  margin: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+.cl-viewer-desc {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 13px;
+  line-height: 1.45;
+  color: #E5E5E5 !important;
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
+}
+
+.cl-viewer-progress {
+  width: 100%;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.35);
+  border-radius: 1px;
+  overflow: hidden;
+  margin-top: 6px;
+  direction: ltr !important;
+}
+
+.cl-viewer-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #FFFFFF;
+}
+
+.cl-viewer-hint {
+  font-family: var(--font-sans, "DM Sans", sans-serif);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: rgba(255, 255, 255, 0.7);
+  text-align: center;
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  animation: hintBounce 1.5s infinite ease-in-out;
+  align-self: center;
+}
+
+@keyframes hintBounce {
+  0%, 100% { transform: translateY(0); opacity: 0.8; }
+  50% { transform: translateY(-4px); opacity: 1; }
+}
+
+/* ==========================================================================
+   PHONE LAYOUT (< 768px)
+   ========================================================================== */
+@media (max-width: 768px) {
+  .cl-panel {
+    border-radius: 24px;
+    padding: 16px;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .cl-panel__head {
+    margin-bottom: 16px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .cl-chips {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    scroll-snap-type: x mandatory;
+    min-width: 0;
+    max-width: 100%;
+    width: 100%;
+    padding-bottom: 6px;
+    margin: 0;
+    padding-left: 2px;
+    padding-right: 8px;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .cl-chips::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cl-chip {
+    flex-shrink: 0;
+    scroll-snap-align: start;
+    font-size: 13px;
+    padding: 6px 16px;
+  }
+
+  .cl-theatre {
+    display: none !important;
+  }
+
+  .cl-phone-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .cl-phone-card {
+    aspect-ratio: 9 / 16;
+    border-radius: 18px;
+    overflow: hidden;
+    position: relative;
+    background: #14213D;
+    cursor: pointer;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    padding: 0;
+    width: 100%;
+    text-align: left;
+    display: block;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+
+  .cl-phone-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(255, 255, 255, 0.35);
+  }
+
+  .cl-phone-card-media {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .cl-phone-card-media img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  .cl-phone-card-dur {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #FFFFFF;
+    font-family: var(--font-sans, "DM Sans", sans-serif);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 6px;
+    z-index: 2;
+  }
+
+  .cl-phone-card-play {
+    position: absolute;
+    bottom: 40px;
+    left: 10px;
+    z-index: 2;
+    color: #FFFFFF;
+    font-size: 12px;
+  }
+
+  .cl-phone-card-tag {
+    position: absolute;
+    bottom: 40px;
+    left: 26px;
+    z-index: 2;
+    color: #E5E5E5;
+    font-family: var(--font-sans, "DM Sans", sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .cl-phone-card-meta {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 24px 10px 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.6) 60%, transparent 100%);
+    z-index: 2;
+  }
+
+  .cl-phone-card-title {
+    font-family: var(--font-serif, "Lora", serif);
+    font-size: 13px;
+    font-weight: 600;
+    color: #FFFFFF;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .cl-tap-btn {
+    width: 64px;
+    height: 64px;
+  }
+
+  .cl-tap-icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Tablet (768px - 1023px) */
+@media (min-width: 769px) and (max-width: 1023px) {
+  .cl-theatre {
+    gap: 12px;
+  }
+  .cl-stage {
+    width: clamp(260px, 30vw, 300px);
+  }
+  .cl-nav {
+    margin-inline: 10px 16px;
+  }
+  h3.cl-title {
+    font-size: 26px;
+  }
+  p.cl-desc {
+    font-size: 15px;
+  }
+}
+
+/* RTL and Urdu Overrides */
+[dir="rtl"] .cl-info,
+html:lang(ur) .cl-info {
+  text-align: right;
+}
+
+[dir="rtl"] .cl-title,
+html:lang(ur) .cl-title,
+[dir="rtl"] .cl-desc,
+html:lang(ur) .cl-desc,
+[dir="rtl"] .cl-label,
+html:lang(ur) .cl-label,
+[dir="rtl"] .cl-more-label,
+html:lang(ur) .cl-more-label,
+[dir="rtl"] .cl-viewer-title,
+html:lang(ur) .cl-viewer-title,
+[dir="rtl"] .cl-viewer-desc,
+html:lang(ur) .cl-viewer-desc {
+  font-family: var(--font-urdu, 'Noto Nastaliq Urdu'), var(--font-sans, 'DM Sans'), sans-serif !important;
+}
+
+[dir="rtl"] .cl-rail,
+html:lang(ur) .cl-rail {
+  right: auto;
+  left: 16px;
+}
+
+[dir="rtl"] .cl-mute,
+html:lang(ur) .cl-mute {
+  right: auto;
+  left: 14px;
+}
+
+[dir="rtl"] .cl-tag,
+html:lang(ur) .cl-tag {
+  left: auto;
+  right: 14px;
+}
+
+/* LTR forced on media progress & numbers */
+[dir="rtl"] .cl-bars,
+html:lang(ur) .cl-bars,
+[dir="rtl"] .cl-seek,
+html:lang(ur) .cl-seek,
+[dir="rtl"] .cl-time,
+html:lang(ur) .cl-time,
+[dir="rtl"] .cl-viewer-progress,
+html:lang(ur) .cl-viewer-progress,
+[dir="rtl"] .cl-viewer-bars,
+html:lang(ur) .cl-viewer-bars {
+  direction: ltr !important;
+}
+
+/* Accessibility Focus Ring (2px solid #FFFFFF with 2px offset) */
+button.cl-chip:focus-visible,
+button.cl-nav-btn:focus-visible,
+button.cl-btn-share:focus-visible,
+button.cl-btn-fullscreen:focus-visible,
+button.cl-btn-fs:focus-visible,
+button.cl-card:focus-visible,
+button.cl-phone-card:focus-visible,
+button.cl-mute:focus-visible,
+.cl-tap:focus-visible,
+.cl-seek:focus-visible,
+.cl-stage:focus-visible,
+.cl-viewer-close:focus-visible,
+.cl-viewer-mute:focus-visible,
+.cl-rail-btn:focus-visible {
+  outline: 2px solid #FFFFFF !important;
+  outline-offset: 2px !important;
+}
+
+/* Prefers Reduced Motion */
+@media (prefers-reduced-motion: reduce) {
+  .cl-tap-btn,
+  .cl-tap-btn.is-flashing,
+  .cl-viewer-hint,
+  .cl-nav-btn,
+  .cl-btn,
+  .cl-chip {
+    animation: none !important;
+    transition: none !important;
+  }
+}

@@ -35,6 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initCampusSkylineFooter();
   initSpecimenSwitcher();
   initHeroContent();
+  initReelTheatre();
 });
 
 function initHeroContent() {
@@ -3448,8 +3449,1141 @@ function initSpecimenSwitcher() {
   }, { passive: true });
 }
 
+/* ==========================================================================
+   Campus Life reels — "Reel Theatre" Hardened Interactive Engine
+   ========================================================================== */
+function initReelTheatre() {
+  const root = document.querySelector(".cl-reels");
+  if (!root) return;
 
+  const content = (window.siteContent && window.siteContent.campusLifeReels) || {};
+  const rawFilms = content.films || [];
 
+  const isUrdu = () => document.documentElement.getAttribute("dir") === "rtl" || document.documentElement.lang === "ur" || document.body.classList.contains("lang-ur");
 
+  function t(keyEn, keyUr, fallback) {
+    const urdu = isUrdu();
+    if (urdu && content[keyUr]) return content[keyUr];
+    if (content[keyEn]) return content[keyEn];
+    return fallback || "";
+  }
 
+  // Handle zero films
+  const panel = document.getElementById("clPanel");
+  const emptyState = document.getElementById("clEmptyState");
+  if (!rawFilms || rawFilms.length === 0) {
+    if (panel) panel.style.display = "none";
+    if (emptyState) {
+      emptyState.style.display = "block";
+      emptyState.textContent = t("filmsComingSoonEn", "filmsComingSoonUr", "Films are coming soon.");
+    }
+    return;
+  }
+  if (emptyState) emptyState.style.display = "none";
+  if (panel) panel.style.display = "";
 
+  // Normalize films data
+  const filmsData = rawFilms.map((f, i) => {
+    let dur = f.duration || "";
+    if (!dur || dur === "NaN:NaN" || dur === "Infinity") dur = "--:--";
+    return {
+      id: f.id || "film-" + i,
+      category: f.category || "all",
+      categoryLabelEn: f.categoryLabelEn || "Film",
+      categoryLabelUr: f.categoryLabelUr || "ویڈیو",
+      badgeEn: f.badgeEn || (dur !== "--:--" ? "OFFICIAL FILM · " + dur + " MIN" : "OFFICIAL FILM"),
+      badgeUr: f.badgeUr || (dur !== "--:--" ? "آفیشل فلم · " + dur + " منٹ" : "آفیشل فلم"),
+      titleEn: f.titleEn || "Featured Film",
+      titleUr: f.titleUr || "منتخب ویڈیو",
+      duration: dur,
+      durationSeconds: f.durationSeconds || 0,
+      descriptionEn: f.descriptionEn || "",
+      descriptionUr: f.descriptionUr || "",
+      videoSrc: f.videoSrc || "",
+      posterSrc: f.posterSrc || f.poster916 || ""
+    };
+  });
+
+  // State
+  let currentFilter = "all";
+  let activeIndexInFilter = 0;
+  let isMuted = true;
+  let isPlaying = false;
+  let activeReelId = filmsData[0].id;
+  let lastTapTime = 0;
+  let stallTimeout = null;
+  let widthCheckTimeout = null;
+  let loadSpinnerTimeout = null;
+  let isViewerOpen = false;
+  let lastFocusedElement = null;
+  let feedObserver = null;
+  let isSeeking = false;
+
+  const isSaveData = Boolean(navigator.connection && navigator.connection.saveData);
+  const isReducedMotion = () => window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  // Announcer & Filter
+  const announcer = document.getElementById("clAnnouncer");
+  const filterChips = root.querySelectorAll(".cl-chip");
+
+  // Desktop Stage Elements
+  const stage = document.getElementById("clStage");
+  const stageVideo = document.getElementById("clStageVideo");
+  const stageSource = document.getElementById("clStageSource");
+  const stageTap = document.getElementById("clStageTap");
+  const stageTapBtn = document.getElementById("clStageTapBtn");
+  const stageMute = document.getElementById("clStageMute");
+  const stageSpinner = document.getElementById("clStageSpinner");
+  const stageStateOverlay = document.getElementById("clStageStateOverlay");
+  const stageStateText = document.getElementById("clStageStateText");
+  const stageStateRetry = document.getElementById("clStageStateRetry");
+  const stageStateOpenLink = document.getElementById("clStageStateOpenLink");
+  const stageTag = document.getElementById("clStageTag");
+  const stageCaption = document.getElementById("clStageCaption");
+  const stageTime = document.getElementById("clStageTime");
+  const stageSeek = document.getElementById("clStageSeek");
+  const stageSeekFill = document.getElementById("clStageSeekFill");
+  const stageSeekThumb = document.getElementById("clStageSeekThumb");
+  const storyBarsContainer = document.getElementById("clStoryBars");
+
+  // Desktop Navigation
+  const desktopNav = document.getElementById("clDesktopNav");
+  const btnPrev = document.getElementById("clNavPrev");
+  const btnNext = document.getElementById("clNavNext");
+
+  // Info Column Elements
+  const infoBadge = document.getElementById("clInfoBadge");
+  const infoTitle = document.getElementById("clInfoTitle");
+  const infoDesc = document.getElementById("clInfoDesc");
+  const btnShare = document.getElementById("clBtnShare");
+  const btnFullscreen = document.getElementById("clBtnFullscreen");
+  const shareFallback = document.getElementById("clShareFallback");
+  const shareInput = document.getElementById("clShareInput");
+  const moreHead = root.querySelector(".cl-more-head");
+  const moreCount = document.getElementById("clMoreCount");
+  const cardsRow = document.getElementById("clCardsRow");
+
+  // Phone Grid & Viewer Elements
+  const phoneGrid = document.getElementById("clPhoneGrid");
+  const phoneViewer = document.getElementById("clPhoneViewer");
+  const viewerBars = document.getElementById("clViewerBars");
+  const viewerClose = document.getElementById("clViewerClose");
+  const viewerMute = document.getElementById("clViewerMute");
+  const viewerFeed = document.getElementById("clViewerFeed");
+
+  // Move viewer modal directly to body
+  if (phoneViewer && phoneViewer.parentElement !== document.body) {
+    document.body.appendChild(phoneViewer);
+  }
+
+  // 1 film edge case
+  if (filmsData.length === 1) {
+    if (desktopNav) desktopNav.style.display = "none";
+    if (moreHead) moreHead.style.display = "none";
+    if (cardsRow) cardsRow.style.display = "none";
+  }
+
+  // Initial Hash routing
+  const initialHash = window.location.hash.replace("#reel-", "").replace("#", "");
+  if (initialHash) {
+    const foundFilm = filmsData.find(f => f.id === initialHash);
+    if (foundFilm) {
+      activeReelId = foundFilm.id;
+      if (currentFilter !== "all" && foundFilm.category !== currentFilter) {
+        currentFilter = "all";
+      }
+    }
+  }
+
+  function getFilteredFilms() {
+    if (currentFilter === "all") return filmsData;
+    return filmsData.filter(f => f.category === currentFilter);
+  }
+
+  function formatTime(sec) {
+    if (isNaN(sec) || !isFinite(sec) || sec < 0) return "--:--";
+    const m = Math.floor(sec / 60);
+    const s = Math.floor(sec % 60);
+    return m + ":" + (s < 10 ? "0" : "") + s;
+  }
+
+  function announceReel(film, idx, total) {
+    if (!announcer) return;
+    const urdu = isUrdu();
+    const template = t("reelOfTotalEn", "reelOfTotalUr", "Reel {current} of {total}: {title}");
+    const msg = template
+      .replace("{current}", (idx + 1).toString())
+      .replace("{total}", total.toString())
+      .replace("{title}", urdu ? film.titleUr : film.titleEn);
+    announcer.textContent = msg;
+  }
+
+  function pauseEveryOtherVideo(exceptVideo) {
+    document.querySelectorAll("video").forEach(v => {
+      if (v !== exceptVideo && !v.paused) {
+        v.pause();
+      }
+    });
+  }
+
+  function setMuteState(muted) {
+    isMuted = muted;
+    if (stageVideo) stageVideo.muted = isMuted;
+
+    if (viewerFeed) {
+      viewerFeed.querySelectorAll("video").forEach(v => {
+        v.muted = isMuted;
+      });
+    }
+
+    const label = isMuted ? t("unmuteEn", "unmuteUr", "Unmute") : t("muteEn", "muteUr", "Mute");
+
+    if (stageMute) {
+      stageMute.setAttribute("aria-label", label);
+      const iconMuted = stageMute.querySelector(".cl-icon-muted");
+      const iconUnmuted = stageMute.querySelector(".cl-icon-unmuted");
+      if (iconMuted) iconMuted.style.display = isMuted ? "" : "none";
+      if (iconUnmuted) iconUnmuted.style.display = isMuted ? "none" : "";
+    }
+
+    if (viewerMute) {
+      viewerMute.setAttribute("aria-label", label);
+      const iconMuted = viewerMute.querySelector(".cl-icon-muted");
+      const iconUnmuted = viewerMute.querySelector(".cl-icon-unmuted");
+      if (iconMuted) iconMuted.style.display = isMuted ? "" : "none";
+      if (iconUnmuted) iconUnmuted.style.display = isMuted ? "none" : "";
+    }
+
+    if (viewerFeed) {
+      viewerFeed.querySelectorAll(".cl-rail-mute").forEach(btn => {
+        btn.setAttribute("aria-label", label);
+        const iconMuted = btn.querySelector(".cl-icon-muted");
+        const iconUnmuted = btn.querySelector(".cl-icon-unmuted");
+        if (iconMuted) iconMuted.style.display = isMuted ? "" : "none";
+        if (iconUnmuted) iconUnmuted.style.display = isMuted ? "none" : "";
+      });
+    }
+  }
+
+  function setStageState(state) {
+    if (!stage) return;
+    stage.dataset.state = state;
+    root.dataset.state = state;
+
+    if (state === "playing") {
+      isPlaying = true;
+      if (stageTap) stageTap.setAttribute("aria-label", t("pauseEn", "pauseUr", "Pause"));
+      if (stageSpinner) stageSpinner.style.opacity = "0";
+      if (stageStateOverlay) stageStateOverlay.style.display = "none";
+    } else if (state === "paused") {
+      isPlaying = false;
+      if (stageTap) stageTap.setAttribute("aria-label", t("playEn", "playUr", "Play"));
+      if (stageSpinner) stageSpinner.style.opacity = "0";
+    } else if (state === "loading") {
+      clearTimeout(loadSpinnerTimeout);
+      loadSpinnerTimeout = setTimeout(() => {
+        if (stage.dataset.state === "loading" && stageSpinner) {
+          stageSpinner.style.opacity = "1";
+        }
+      }, 300);
+    } else if (state === "ended") {
+      isPlaying = false;
+      if (stageTap) stageTap.setAttribute("aria-label", t("replayEn", "replayUr", "Replay"));
+      if (stageTapBtn) {
+        stageTapBtn.innerHTML = `<svg class="cl-tap-icon" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#14213D" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>`;
+      }
+    }
+  }
+
+  function showStageOverlay(type, customText) {
+    if (!stageStateOverlay) return;
+    stageStateOverlay.style.display = "flex";
+    if (stageSpinner) stageSpinner.style.opacity = "0";
+
+    const list = getFilteredFilms();
+    const film = list[activeIndexInFilter] || filmsData[0];
+
+    if (type === "stalled") {
+      stageStateText.textContent = customText || t("stalledMessageEn", "stalledMessageUr", "Still loading. Check your connection.");
+      if (stageStateOpenLink) stageStateOpenLink.style.display = "none";
+    } else if (type === "offline") {
+      stageStateText.textContent = customText || t("offlineMessageEn", "offlineMessageUr", "You are offline.");
+      if (stageStateOpenLink) stageStateOpenLink.style.display = "none";
+    } else if (type === "error") {
+      stageStateText.textContent = customText || t("errorMessageEn", "errorMessageUr", "This film cannot play on your device.");
+      if (stageStateOpenLink) {
+        stageStateOpenLink.style.display = "inline-flex";
+        stageStateOpenLink.href = film.videoSrc;
+      }
+    }
+  }
+
+  function playVideoSafely(video, onBlocked) {
+    if (!video) return;
+    pauseEveryOtherVideo(video);
+
+    video.playsInline = true;
+    video.setAttribute("playsinline", "");
+    video.setAttribute("webkit-playsinline", "true");
+    video.muted = isMuted;
+
+    clearTimeout(stallTimeout);
+    stallTimeout = setTimeout(() => {
+      if (video.readyState < 3 && !video.paused) {
+        setStageState("stalled");
+        showStageOverlay("stalled");
+      }
+    }, 8000);
+
+    const promise = video.play();
+    if (promise !== undefined) {
+      promise.then(() => {
+        clearTimeout(stallTimeout);
+        clearTimeout(widthCheckTimeout);
+        widthCheckTimeout = setTimeout(() => {
+          if (!video.paused && video.videoWidth === 0) {
+            setStageState("error");
+            showStageOverlay("error");
+          }
+        }, 3000);
+      }).catch(err => {
+        clearTimeout(stallTimeout);
+        if (err.name === "AbortError") return;
+        if (err.name === "NotAllowedError") {
+          setMuteState(true);
+          video.muted = true;
+          video.play().catch(() => {
+            if (onBlocked) onBlocked();
+          });
+          return;
+        }
+        setStageState("error");
+        showStageOverlay("error");
+        if (onBlocked) onBlocked();
+      });
+    }
+  }
+
+  function renderStoryBars() {
+    const list = getFilteredFilms();
+    const renderBarsInContainer = (container) => {
+      if (!container) return;
+      container.innerHTML = "";
+      list.forEach((_, idx) => {
+        const bar = document.createElement("div");
+        bar.className = "cl-bar";
+        bar.setAttribute("role", "progressbar");
+        bar.setAttribute("aria-valuemin", "0");
+        bar.setAttribute("aria-valuemax", "100");
+        const fill = document.createElement("div");
+        fill.className = "cl-bar-fill";
+        if (idx < activeIndexInFilter) {
+          fill.style.width = "100%";
+          bar.setAttribute("aria-valuenow", "100");
+        } else {
+          fill.style.width = "0%";
+          bar.setAttribute("aria-valuenow", "0");
+        }
+        bar.appendChild(fill);
+        container.appendChild(bar);
+      });
+    };
+
+    renderBarsInContainer(storyBarsContainer);
+    renderBarsInContainer(viewerBars);
+  }
+
+  function updateStoryBarsProgress(currentTime, duration) {
+    if (!duration || isNaN(duration)) return;
+    const pct = Math.min(100, Math.max(0, (currentTime / duration) * 100));
+
+    const updateInContainer = (container) => {
+      if (!container) return;
+      const bars = container.querySelectorAll(".cl-bar");
+      bars.forEach((bar, idx) => {
+        const fill = bar.querySelector(".cl-bar-fill");
+        if (!fill) return;
+        if (idx < activeIndexInFilter) {
+          fill.style.width = "100%";
+          bar.setAttribute("aria-valuenow", "100");
+        } else if (idx === activeIndexInFilter) {
+          fill.style.width = pct + "%";
+          bar.setAttribute("aria-valuenow", Math.round(pct).toString());
+        } else {
+          fill.style.width = "0%";
+          bar.setAttribute("aria-valuenow", "0");
+        }
+      });
+    };
+
+    updateInContainer(storyBarsContainer);
+    updateInContainer(viewerBars);
+  }
+
+  function updateDesktopNavButtons() {
+    const list = getFilteredFilms();
+    if (!btnPrev || !btnNext) return;
+    const isFirst = activeIndexInFilter <= 0;
+    const isLast = activeIndexInFilter >= list.length - 1;
+
+    btnPrev.setAttribute("aria-disabled", isFirst ? "true" : "false");
+    btnNext.setAttribute("aria-disabled", isLast ? "true" : "false");
+    btnPrev.classList.toggle("is-disabled", isFirst);
+    btnNext.classList.toggle("is-disabled", isLast);
+  }
+
+  function renderDesktopCards() {
+    if (!cardsRow) return;
+    cardsRow.innerHTML = "";
+    const urdu = isUrdu();
+    filmsData.forEach(film => {
+      const isMatch = currentFilter === "all" || film.category === currentFilter;
+      const card = document.createElement("button");
+      card.type = "button";
+      card.className = "cl-card" + (film.id === activeReelId ? " is-active" : "") + (!isMatch ? " is-dimmed" : "");
+      card.setAttribute("role", "listitem");
+      card.setAttribute("aria-label", urdu ? film.titleUr : film.titleEn);
+      card.dataset.id = film.id;
+
+      card.innerHTML = `
+        <div class="cl-card-thumb">
+          <img src="${film.posterSrc}" alt="" loading="lazy">
+          <span class="cl-card-play" aria-hidden="true">▶</span>
+          <span class="cl-card-dur">${film.duration}</span>
+        </div>
+        <span class="cl-card-title">${urdu ? film.titleUr : film.titleEn}</span>
+      `;
+
+      card.addEventListener("click", () => {
+        selectReelById(film.id, true);
+      });
+
+      cardsRow.appendChild(card);
+    });
+
+    if (moreCount) {
+      const list = getFilteredFilms();
+      moreCount.textContent = list.length + (urdu ? " ویڈیوز" : " films");
+    }
+  }
+
+  function renderPhoneGrid() {
+    if (!phoneGrid) return;
+    phoneGrid.innerHTML = "";
+    const urdu = isUrdu();
+    const list = getFilteredFilms();
+    list.forEach(film => {
+      const item = document.createElement("button");
+      item.type = "button";
+      item.className = "cl-phone-card" + (film.id === activeReelId ? " is-active" : "");
+      item.setAttribute("role", "listitem");
+      item.setAttribute("aria-label", urdu ? film.titleUr : film.titleEn);
+      item.dataset.id = film.id;
+
+      item.innerHTML = `
+        <div class="cl-phone-card-media">
+          <img src="${film.posterSrc}" alt="" loading="lazy">
+          <span class="cl-phone-card-play" aria-hidden="true">▶</span>
+          <span class="cl-phone-card-tag">${urdu ? film.categoryLabelUr : film.categoryLabelEn}</span>
+          <span class="cl-phone-card-dur">${film.duration}</span>
+        </div>
+        <div class="cl-phone-card-meta">
+          <h4 class="cl-phone-card-title">${urdu ? film.titleUr : film.titleEn}</h4>
+        </div>
+      `;
+
+      item.addEventListener("click", () => {
+        lastFocusedElement = item;
+        selectReelById(film.id, false);
+        openPhoneViewer();
+      });
+
+      phoneGrid.appendChild(item);
+    });
+  }
+
+  function selectReelById(id, shouldPlay) {
+    const list = getFilteredFilms();
+    let idx = list.findIndex(f => f.id === id);
+    if (idx === -1) {
+      if (list.length > 0) {
+        idx = 0;
+        id = list[0].id;
+      } else {
+        return;
+      }
+    }
+
+    activeReelId = id;
+    activeIndexInFilter = idx;
+    const film = list[idx];
+    const urdu = isUrdu();
+
+    try {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", "#reel-" + film.id);
+      }
+    } catch (e) {}
+
+    announceReel(film, idx, list.length);
+
+    // Update Desktop Info
+    if (stageTag) stageTag.textContent = (urdu ? film.categoryLabelUr : film.categoryLabelEn).toUpperCase();
+    if (stageCaption) stageCaption.textContent = urdu ? film.titleUr : film.titleEn;
+    if (stageTime) stageTime.textContent = `0:00 / ${film.duration}`;
+    if (infoBadge) infoBadge.textContent = urdu ? film.badgeUr : film.badgeEn;
+    if (infoTitle) infoTitle.textContent = urdu ? film.titleUr : film.titleEn;
+    if (infoDesc) infoDesc.textContent = urdu ? film.descriptionUr : film.descriptionEn;
+
+    if (stageTapBtn) {
+      stageTapBtn.innerHTML = `<svg class="cl-tap-icon" viewBox="0 0 24 24" width="32" height="32" fill="#14213D" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>`;
+    }
+
+    // Update Desktop Stage Video
+    if (stageVideo && !isViewerOpen) {
+      stageVideo.poster = film.posterSrc;
+      if (stageSource) {
+        stageSource.src = film.videoSrc;
+      } else {
+        stageVideo.src = film.videoSrc;
+      }
+      stageVideo.load();
+      if (shouldPlay) {
+        setStageState("loading");
+        playVideoSafely(stageVideo, () => setStageState("paused"));
+      } else {
+        setStageState("paused");
+      }
+    }
+
+    renderStoryBars();
+    updateDesktopNavButtons();
+    renderDesktopCards();
+    renderPhoneGrid();
+
+    // If phone viewer is open, scroll feed to active slide
+    if (isViewerOpen && viewerFeed) {
+      const slides = viewerFeed.querySelectorAll(".cl-viewer-slide");
+      if (slides[idx]) {
+        slides[idx].scrollIntoView({ behavior: isReducedMotion() ? "auto" : "smooth", block: "start" });
+      }
+    }
+  }
+
+  function prevReel() {
+    const list = getFilteredFilms();
+    if (activeIndexInFilter <= 0) return;
+    selectReelById(list[activeIndexInFilter - 1].id, isPlaying);
+  }
+
+  function nextReel() {
+    const list = getFilteredFilms();
+    if (activeIndexInFilter >= list.length - 1) return;
+    selectReelById(list[activeIndexInFilter + 1].id, isPlaying);
+  }
+
+  function toggleStagePlay() {
+    const now = Date.now();
+    if (now - lastTapTime < 150) return;
+    lastTapTime = now;
+
+    if (!stageVideo) return;
+    if (stage.dataset.state === "ended") {
+      stageVideo.currentTime = 0;
+      setStageState("loading");
+      playVideoSafely(stageVideo);
+      return;
+    }
+
+    if (stageVideo.paused) {
+      setStageState("loading");
+      playVideoSafely(stageVideo, () => setStageState("paused"));
+    } else {
+      stageVideo.pause();
+      setStageState("paused");
+    }
+
+    if (!isReducedMotion() && stageTapBtn) {
+      stageTapBtn.classList.remove("is-flashing");
+      void stageTapBtn.offsetWidth;
+      stageTapBtn.classList.add("is-flashing");
+    }
+  }
+
+  function shareCurrentReel() {
+    const list = getFilteredFilms();
+    const film = list[activeIndexInFilter] || filmsData[0];
+    const urdu = isUrdu();
+    const title = urdu ? film.titleUr : film.titleEn;
+    const shareUrl = window.location.origin + window.location.pathname + "#reel-" + film.id;
+
+    if (navigator.share) {
+      navigator.share({
+        title: title,
+        text: (urdu ? film.descriptionUr : film.descriptionEn),
+        url: shareUrl
+      }).catch(() => {});
+    } else {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(shareUrl).then(() => {
+          if (window.HESToast && window.HESToast.success) {
+            window.HESToast.success(t("linkCopiedEn", "linkCopiedUr", "Link copied to clipboard!"));
+          } else {
+            alert(t("linkCopiedEn", "linkCopiedUr", "Link copied to clipboard!"));
+          }
+        }).catch(() => {
+          openWhatsAppOrFallback();
+        });
+      } else {
+        openWhatsAppOrFallback();
+      }
+    }
+
+    function openWhatsAppOrFallback() {
+      const waUrl = "https://wa.me/?text=" + encodeURIComponent(title + ": " + shareUrl);
+      const opened = window.open(waUrl, "_blank");
+      if (!opened) {
+        if (shareFallback && shareInput) {
+          shareFallback.style.display = "block";
+          shareInput.value = shareUrl;
+          shareInput.focus();
+          shareInput.select();
+        }
+      }
+    }
+  }
+
+  function openFullscreen(el) {
+    const target = el || stageVideo || stage;
+    if (!target) return;
+    if (target.requestFullscreen) {
+      target.requestFullscreen().catch(() => {});
+    } else if (target.webkitRequestFullscreen) {
+      target.webkitRequestFullscreen();
+    } else if (target.webkitEnterFullscreen) {
+      target.webkitEnterFullscreen();
+    }
+  }
+
+  /* --------------------------------------------------------------------------
+     INSTAGRAM-STYLE PHONE REEL VIEWER
+     -------------------------------------------------------------------------- */
+  function buildViewerSlides() {
+    if (!viewerFeed) return;
+    viewerFeed.innerHTML = "";
+    const list = getFilteredFilms();
+    const urdu = isUrdu();
+
+    list.forEach((film, idx) => {
+      const slide = document.createElement("div");
+      slide.className = "cl-viewer-slide";
+      slide.dataset.id = film.id;
+      slide.dataset.index = idx.toString();
+
+      slide.innerHTML = `
+        <video class="cl-slide-video" playsinline webkit-playsinline="true" loop muted preload="none" poster="${film.posterSrc}"></video>
+
+        <div class="cl-tap" role="button" tabindex="0" aria-label="${t("playEn", "playUr", "Play")}">
+          <div class="cl-tap-btn" aria-hidden="true">
+            <svg class="cl-tap-icon" viewBox="0 0 24 24" width="28" height="28" fill="#14213D" aria-hidden="true"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+          </div>
+        </div>
+
+        <div class="cl-spinner" aria-hidden="true">
+          <div class="cl-spinner-ring"></div>
+        </div>
+
+        <div class="cl-state-overlay" style="display:none;">
+          <p class="cl-state-text"></p>
+          <div class="cl-state-actions">
+            <button type="button" class="cl-state-retry">${t("retryEn", "retryUr", "Retry")}</button>
+            <a href="${film.videoSrc}" target="_blank" rel="noopener noreferrer" class="cl-state-openlink" style="display:none;">${t("openVideoEn", "openVideoUr", "Open video")}</a>
+          </div>
+        </div>
+
+        <div class="cl-rail">
+          <button type="button" class="cl-rail-btn cl-rail-mute" aria-label="${isMuted ? t("unmuteEn", "unmuteUr", "Unmute") : t("muteEn", "muteUr", "Mute")}">
+            <svg class="cl-icon-muted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="${isMuted ? "" : "display:none;"}"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="22" y1="9" x2="16" y2="15"/><line x1="16" y1="9" x2="22" y2="15"/></svg>
+            <svg class="cl-icon-unmuted" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="${isMuted ? "display:none;" : ""}"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+          </button>
+          <button type="button" class="cl-rail-btn cl-rail-share" aria-label="${t("shareEn", "shareUr", "Share")}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+          </button>
+          <button type="button" class="cl-rail-btn cl-rail-fs" aria-label="${t("fullScreenEn", "fullScreenUr", "Full screen")}">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+          </button>
+        </div>
+
+        <div class="cl-viewer-bottom">
+          <span class="cl-tag">${(urdu ? film.categoryLabelUr : film.categoryLabelEn).toUpperCase()}</span>
+          <h4 class="cl-viewer-title">${urdu ? film.titleUr : film.titleEn}</h4>
+          <p class="cl-viewer-desc">${urdu ? film.descriptionUr : film.descriptionEn}</p>
+          <div class="cl-viewer-progress">
+            <div class="cl-viewer-progress-fill"></div>
+          </div>
+          <div class="cl-viewer-hint">
+            <span>↑</span> <span>${t("swipeUpHintEn", "swipeUpHintUr", "Swipe up for next reel")}</span>
+          </div>
+        </div>
+      `;
+
+      // Tap handling on slide
+      const tapLayer = slide.querySelector(".cl-tap");
+      const video = slide.querySelector("video");
+      const tapBtn = slide.querySelector(".cl-tap-btn");
+
+      tapLayer.addEventListener("click", () => {
+        const now = Date.now();
+        if (now - lastTapTime < 150) return;
+        lastTapTime = now;
+
+        if (video.paused) {
+          playVideoSafely(video);
+          tapLayer.setAttribute("aria-label", t("pauseEn", "pauseUr", "Pause"));
+        } else {
+          video.pause();
+          tapLayer.setAttribute("aria-label", t("playEn", "playUr", "Play"));
+        }
+
+        if (!isReducedMotion() && tapBtn) {
+          tapBtn.classList.remove("is-flashing");
+          void tapBtn.offsetWidth;
+          tapBtn.classList.add("is-flashing");
+        }
+      });
+
+      // Rail listeners
+      const railMuteBtn = slide.querySelector(".cl-rail-mute");
+      const railShareBtn = slide.querySelector(".cl-rail-share");
+      const railFsBtn = slide.querySelector(".cl-rail-fs");
+
+      railMuteBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        setMuteState(!isMuted);
+      });
+      railShareBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        shareCurrentReel();
+      });
+      railFsBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openFullscreen(video);
+      });
+
+      // Video event listeners
+      video.addEventListener("timeupdate", () => {
+        if (!video.duration || isNaN(video.duration)) return;
+        const fill = slide.querySelector(".cl-viewer-progress-fill");
+        const pct = (video.currentTime / video.duration) * 100;
+        if (fill) fill.style.width = pct + "%";
+        if (idx === activeIndexInFilter) {
+          updateStoryBarsProgress(video.currentTime, video.duration);
+        }
+      });
+
+      video.addEventListener("playing", () => {
+        slide.dataset.state = "playing";
+        const spinner = slide.querySelector(".cl-spinner");
+        const overlay = slide.querySelector(".cl-state-overlay");
+        if (spinner) spinner.style.opacity = "0";
+        if (overlay) overlay.style.display = "none";
+      });
+
+      video.addEventListener("pause", () => {
+        slide.dataset.state = "paused";
+      });
+
+      video.addEventListener("waiting", () => {
+        slide.dataset.state = "loading";
+        const spinner = slide.querySelector(".cl-spinner");
+        setTimeout(() => {
+          if (slide.dataset.state === "loading" && spinner) spinner.style.opacity = "1";
+        }, 300);
+      });
+
+      video.addEventListener("error", () => {
+        slide.dataset.state = "error";
+        const overlay = slide.querySelector(".cl-state-overlay");
+        const text = slide.querySelector(".cl-state-text");
+        const link = slide.querySelector(".cl-state-openlink");
+        if (overlay && text) {
+          overlay.style.display = "flex";
+          text.textContent = t("errorMessageEn", "errorMessageUr", "This film cannot play on your device.");
+          if (link) {
+            link.style.display = "inline-flex";
+            link.href = film.videoSrc;
+          }
+        }
+      });
+
+      const retryBtn = slide.querySelector(".cl-state-retry");
+      if (retryBtn) {
+        retryBtn.addEventListener("click", (e) => {
+          e.stopPropagation();
+          video.load();
+          playVideoSafely(video);
+        });
+      }
+
+      viewerFeed.appendChild(slide);
+    });
+
+    setupFeedObserver();
+  }
+
+  function setupFeedObserver() {
+    if (feedObserver) feedObserver.disconnect();
+    if (!("IntersectionObserver" in window) || !viewerFeed) return;
+
+    feedObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.6) {
+          const slide = entry.target;
+          const idx = parseInt(slide.dataset.index, 10);
+          onSlideBecomeActive(idx);
+        }
+      });
+    }, {
+      root: viewerFeed,
+      threshold: 0.6
+    });
+
+    viewerFeed.querySelectorAll(".cl-viewer-slide").forEach(s => feedObserver.observe(s));
+  }
+
+  function onSlideBecomeActive(idx) {
+    const list = getFilteredFilms();
+    if (idx < 0 || idx >= list.length) return;
+
+    activeIndexInFilter = idx;
+    const film = list[idx];
+    activeReelId = film.id;
+
+    try {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, "", "#reel-" + film.id);
+      }
+    } catch (e) {}
+
+    announceReel(film, idx, list.length);
+    renderStoryBars();
+
+    const slides = viewerFeed.querySelectorAll(".cl-viewer-slide");
+    slides.forEach((slide, i) => {
+      const video = slide.querySelector("video");
+      if (!video) return;
+
+      if (i === idx) {
+        if (!video.src || !video.src.includes(film.videoSrc)) {
+          video.src = film.videoSrc;
+          video.load();
+        }
+        playVideoSafely(video);
+
+        if (!isSaveData && i + 1 < list.length) {
+          const nextVideo = slides[i + 1].querySelector("video");
+          if (nextVideo && (!nextVideo.src || !nextVideo.src.includes(list[i + 1].videoSrc))) {
+            nextVideo.src = list[i + 1].videoSrc;
+            nextVideo.preload = "metadata";
+          }
+        }
+      } else if (Math.abs(i - idx) > 1) {
+        video.pause();
+        video.currentTime = 0;
+        video.removeAttribute("src");
+        video.load();
+      } else {
+        video.pause();
+      }
+    });
+  }
+
+  function openPhoneViewer() {
+    if (!phoneViewer || isViewerOpen) return;
+    isViewerOpen = true;
+
+    if (stageVideo) {
+      stageVideo.pause();
+      stageVideo.currentTime = 0;
+    }
+    pauseEveryOtherVideo(null);
+
+    document.body.classList.add("reel-viewer-open");
+    phoneViewer.removeAttribute("hidden");
+
+    try {
+      window.history.pushState({ clReelViewer: true }, "");
+    } catch (e) {}
+
+    buildViewerSlides();
+
+    const slides = viewerFeed.querySelectorAll(".cl-viewer-slide");
+    if (slides[activeIndexInFilter]) {
+      slides[activeIndexInFilter].scrollIntoView({ behavior: "auto", block: "start" });
+      onSlideBecomeActive(activeIndexInFilter);
+    }
+
+    if (viewerClose) viewerClose.focus();
+  }
+
+  function closePhoneViewer() {
+    if (!phoneViewer || !isViewerOpen) return;
+    isViewerOpen = false;
+
+    if (viewerFeed) {
+      viewerFeed.querySelectorAll("video").forEach(v => {
+        v.pause();
+        v.currentTime = 0;
+        v.removeAttribute("src");
+        v.load();
+      });
+    }
+
+    phoneViewer.setAttribute("hidden", "");
+    document.body.classList.remove("reel-viewer-open");
+
+    const list = getFilteredFilms();
+    const film = list[activeIndexInFilter] || filmsData[0];
+    if (stageVideo) {
+      stageVideo.poster = film.posterSrc;
+      if (stageSource) stageSource.src = film.videoSrc;
+      else stageVideo.src = film.videoSrc;
+      stageVideo.load();
+      setStageState("paused");
+    }
+
+    if (lastFocusedElement && lastFocusedElement.focus) {
+      lastFocusedElement.focus();
+    }
+  }
+
+  window.addEventListener("popstate", () => {
+    if (isViewerOpen) {
+      closePhoneViewer();
+    }
+  });
+
+  if (stageTap) stageTap.addEventListener("click", toggleStagePlay);
+  if (stageVideo) stageVideo.addEventListener("click", toggleStagePlay);
+
+  if (stageMute) {
+    stageMute.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setMuteState(!isMuted);
+    });
+  }
+
+  if (viewerMute) {
+    viewerMute.addEventListener("click", (e) => {
+      e.stopPropagation();
+      setMuteState(!isMuted);
+    });
+  }
+
+  if (viewerClose) {
+    viewerClose.addEventListener("click", () => {
+      if (window.history.state && window.history.state.clReelViewer) {
+        window.history.back();
+      } else {
+        closePhoneViewer();
+      }
+    });
+  }
+
+  if (btnPrev) btnPrev.addEventListener("click", prevReel);
+  if (btnNext) btnNext.addEventListener("click", nextReel);
+
+  if (btnShare) btnShare.addEventListener("click", shareCurrentReel);
+  if (btnFullscreen) btnFullscreen.addEventListener("click", () => openFullscreen(stage));
+
+  if (stageVideo) {
+    stageVideo.addEventListener("timeupdate", () => {
+      if (!stageVideo.duration || isNaN(stageVideo.duration)) return;
+      const cur = stageVideo.currentTime;
+      const dur = stageVideo.duration;
+      const pct = (cur / dur) * 100;
+
+      if (stageTime) stageTime.textContent = `${formatTime(cur)} / ${formatTime(dur)}`;
+      if (stageSeekFill) stageSeekFill.style.width = pct + "%";
+      if (stageSeekThumb) stageSeekThumb.style.left = pct + "%";
+      if (stageSeek) stageSeek.setAttribute("aria-valuenow", Math.round(pct).toString());
+
+      updateStoryBarsProgress(cur, dur);
+    });
+
+    stageVideo.addEventListener("playing", () => setStageState("playing"));
+    stageVideo.addEventListener("pause", () => setStageState("paused"));
+    stageVideo.addEventListener("waiting", () => setStageState("loading"));
+
+    stageVideo.addEventListener("ended", () => {
+      const list = getFilteredFilms();
+      if (activeIndexInFilter < list.length - 1) {
+        nextReel();
+      } else {
+        setStageState("ended");
+      }
+    });
+
+    stageVideo.addEventListener("error", () => {
+      setStageState("error");
+      showStageOverlay("error");
+    });
+    if (stageSource) {
+      stageSource.addEventListener("error", () => {
+        setStageState("error");
+        showStageOverlay("error");
+      });
+    }
+  }
+
+  if (stageStateRetry) {
+    stageStateRetry.addEventListener("click", () => {
+      if (!stageVideo) return;
+      stageVideo.load();
+      playVideoSafely(stageVideo);
+    });
+  }
+
+  if (stageSeek) {
+    const seekToPosition = (e) => {
+      if (!stageVideo || !stageVideo.duration) return;
+      const rect = stageSeek.getBoundingClientRect();
+      const clientX = e.clientX || (e.touches && e.touches[0].clientX) || 0;
+      const clickPos = Math.max(0, Math.min(clientX - rect.left, rect.width));
+      const ratio = clickPos / rect.width;
+      stageVideo.currentTime = ratio * stageVideo.duration;
+    };
+
+    stageSeek.addEventListener("mousedown", (e) => {
+      isSeeking = true;
+      seekToPosition(e);
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (isSeeking) seekToPosition(e);
+    });
+    window.addEventListener("mouseup", () => {
+      isSeeking = false;
+    });
+
+    stageSeek.addEventListener("touchstart", (e) => {
+      isSeeking = true;
+      seekToPosition(e);
+    }, { passive: true });
+    window.addEventListener("touchmove", (e) => {
+      if (isSeeking) seekToPosition(e);
+    }, { passive: true });
+    window.addEventListener("touchend", () => {
+      isSeeking = false;
+    });
+
+    stageSeek.addEventListener("keydown", (e) => {
+      if (!stageVideo || !stageVideo.duration) return;
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        stageVideo.currentTime = Math.max(0, stageVideo.currentTime - 5);
+      } else if (e.key === "ArrowRight") {
+        e.preventDefault();
+        stageVideo.currentTime = Math.min(stageVideo.duration, stageVideo.currentTime + 5);
+      } else if (e.key === "Home") {
+        e.preventDefault();
+        stageVideo.currentTime = 0;
+      } else if (e.key === "End") {
+        e.preventDefault();
+        stageVideo.currentTime = stageVideo.duration;
+      }
+    });
+  }
+
+  if (stage) {
+    stage.addEventListener("keydown", (e) => {
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        prevReel();
+      } else if (e.key === "ArrowDown") {
+        e.preventDefault();
+        nextReel();
+      } else if (e.key === " " || e.key === "Enter" || e.key === "k") {
+        e.preventDefault();
+        toggleStagePlay();
+      } else if (e.key === "m") {
+        e.preventDefault();
+        setMuteState(!isMuted);
+      }
+    });
+  }
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") {
+      if (isViewerOpen) {
+        closePhoneViewer();
+      }
+    }
+  });
+
+  filterChips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      const filter = chip.dataset.filter || "all";
+      if (currentFilter === filter) return;
+
+      currentFilter = filter;
+      filterChips.forEach(c => {
+        const isActive = c === chip;
+        c.classList.toggle("is-active", isActive);
+        c.setAttribute("aria-selected", isActive ? "true" : "false");
+      });
+
+      const list = getFilteredFilms();
+      const exists = list.some(f => f.id === activeReelId);
+      if (!exists && list.length > 0) {
+        selectReelById(list[0].id, isPlaying);
+      } else {
+        renderStoryBars();
+        updateDesktopNavButtons();
+        renderDesktopCards();
+        renderPhoneGrid();
+        if (isViewerOpen) buildViewerSlides();
+      }
+    });
+  });
+
+  window.addEventListener("offline", () => {
+    pauseEveryOtherVideo(null);
+    showStageOverlay("offline");
+  });
+  window.addEventListener("online", () => {
+    if (stageStateOverlay) stageStateOverlay.style.display = "none";
+    setStageState("paused");
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      pauseEveryOtherVideo(null);
+    }
+  });
+  window.addEventListener("pagehide", () => {
+    pauseEveryOtherVideo(null);
+  });
+  window.addEventListener("pageshow", (e) => {
+    if (e.persisted) {
+      pauseEveryOtherVideo(null);
+      setStageState("paused");
+    }
+  });
+
+  window.addEventListener("hes-language-changed", () => {
+    selectReelById(activeReelId, isPlaying);
+  });
+  if (window.MutationObserver) {
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((m) => {
+        if (m.attributeName === "dir" || m.attributeName === "lang") {
+          selectReelById(activeReelId, isPlaying);
+        }
+      });
+    });
+    observer.observe(document.documentElement, { attributes: true });
+  }
+
+  setMuteState(true);
+  selectReelById(activeReelId, false);
+}

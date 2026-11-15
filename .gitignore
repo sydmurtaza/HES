@@ -15,3 +15,9 @@ audit-artifacts/**/*.json
 __pycache__/
 *.pyc
 
+# Node modules
+node_modules/
+tests/reels/node_modules/
+tests/reels/test-results/
+tests/reels/playwright-report/
+
