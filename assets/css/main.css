@@ -12693,6 +12693,14 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
     transform: rotate(180deg) !important;
   }
 
+  .footer-skyline .footer-link-group.is-closing .footer-accordion-icon {
+    transform: rotate(0deg) !important;
+  }
+
+  .footer-skyline .footer-links-list {
+    will-change: opacity, transform;
+  }
+
   .footer-skyline .footer-links-list {
     padding-block-end: 18px !important;
     padding-inline-start: 4px !important;
@@ -13306,6 +13314,29 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   text-align: left !important;
 }
 
+#admission-hero .cl-hero-title-col,
+#admission-hero .cl-hero-summary-col {
+  display: block !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+#admission-hero .cl-desc-extra {
+  display: inline;
+}
+
+.cl-btn-arrow {
+  display: inline-block;
+  font-size: 1rem;
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+
+[dir="rtl"] .cl-btn-arrow {
+  transform: scaleX(-1);
+}
+
 /* Eyebrow Label */
 #admission-hero .cl-hero-tag {
   font-family: var(--font-sans, system-ui, sans-serif) !important;
@@ -13508,66 +13539,313 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   color: #FFFFFF !important;
 }
 
-/* Responsive */
-@media (max-width: 992px) {
+/* Responsive Tablet Hero (768px to 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
   #admission-hero {
-    min-height: auto !important;
-    height: auto !important;
-    padding-top: 100px !important;
+    width: 100% !important;
+    height: 100svh !important;
+    min-height: 620px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding-top: clamp(4.85rem, 10.5svh, 5.65rem) !important;
     padding-bottom: 0 !important;
+    padding-inline: 0 !important;
+    background: #FFFFFF !important;
+    background-image: none !important;
+    border-bottom: 1px solid #E5E5E5 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
   }
 
   #admission-hero .cl-hero-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
-    text-align: center !important;
-    gap: 32px !important;
-    padding-bottom: 0 !important;
+    justify-content: flex-start !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
   }
 
   #admission-hero .cl-hero-text {
-    max-width: 100% !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    padding-inline: clamp(1rem, 4.5vw, 1.75rem) !important;
     text-align: center !important;
-    order: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    z-index: 2 !important;
+    margin: 0 !important;
+    padding-top: 0 !important;
     padding-bottom: 0 !important;
+    order: 1 !important;
+  }
+
+  #admission-hero .cl-hero-tag {
+    font-family: var(--font-sans, system-ui, sans-serif) !important;
+    font-size: 0.68rem !important;
+    letter-spacing: 0.16em !important;
+    margin: 0 0 0.35rem !important;
+    color: #334155 !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    display: inline-block !important;
+    text-align: center !important;
   }
 
   #admission-hero .cl-hero-title {
+    font-size: clamp(2.35rem, 10.8vw, 3.5rem) !important;
+    line-height: 0.96 !important;
+    letter-spacing: -0.035em !important;
+    margin: 0 0 0.5rem !important;
     text-align: center !important;
+  }
+
+  #admission-hero .cl-hero-title-solid {
+    display: block !important;
+    color: #0F172A !important;
+  }
+
+  #admission-hero .cl-hero-title-outline {
+    display: block !important;
+    color: transparent !important;
+    -webkit-text-stroke: 2px #0F172A !important;
   }
 
   #admission-hero .cl-hero-desc {
-    margin-left: auto !important;
-    margin-right: auto !important;
+    font-size: clamp(0.83rem, 3.2vw, 0.93rem) !important;
+    line-height: 1.42 !important;
+    max-width: 34ch !important;
+    margin: 0 auto 0.95rem !important;
     text-align: center !important;
+    color: #475569 !important;
   }
 
   #admission-hero .cl-hero-actions {
+    display: flex !important;
+    flex-direction: row !important;
     justify-content: center !important;
+    align-items: center !important;
+    gap: 0.55rem !important;
+    flex-wrap: nowrap !important;
+    margin: 0 auto 0.5rem !important;
+    width: 100% !important;
   }
 
-  #admission-hero .ar-hero-student-card,
-  .ar-hero-student-card {
-    display: flex !important;
-    max-width: 380px !important;
-    margin: 0 auto !important;
+  #admission-hero .cl-hero-actions .btn.cl-btn-white,
+  #admission-hero .cl-hero-actions .btn.cl-btn-outline {
+    padding: 0.62rem 1.05rem !important;
+    font-size: clamp(0.78rem, 3.1vw, 0.88rem) !important;
+    white-space: nowrap !important;
+    min-height: 40px !important;
+    border-radius: 9999px !important;
+    font-weight: 700 !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
     justify-content: center !important;
+    flex: 0 1 auto !important;
+    transition: all 0.25s ease !important;
+  }
+
+  #admission-hero .cl-hero-actions .btn.cl-btn-white {
+    background-color: #14213D !important;
+    color: #FFFFFF !important;
+    border: 1.5px solid #14213D !important;
+    box-shadow: 0 4px 14px rgba(20, 33, 61, 0.18) !important;
+  }
+
+  #admission-hero .cl-hero-actions .btn.cl-btn-outline {
+    background-color: #FFFFFF !important;
+    color: #14213D !important;
+    border: 1.5px solid #14213D !important;
+  }
+
+  #admission-hero .ar-hero-student-card {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    position: relative !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+    background: radial-gradient(ellipse 75% 65% at 50% 82%, rgba(20, 33, 61, 0.07) 0%, rgba(20, 33, 61, 0.02) 48%, rgba(255, 255, 255, 0) 75%) !important;
+    z-index: 1 !important;
     order: 2 !important;
-    padding-bottom: 0 !important;
+    filter: none !important;
+    box-shadow: none !important;
+  }
+
+  #admission-hero .ar-student-arch-frame {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    line-height: 0 !important;
+  }
+
+  #admission-hero .ar-student-arch-frame picture {
+    display: flex !important;
+    height: 100% !important;
+    width: 100% !important;
+    align-items: flex-end !important;
+    justify-content: center !important;
+    line-height: 0 !important;
   }
 
   #admission-hero .ar-student-hero-img {
-    height: auto !important;
-    max-height: 460px !important;
-    margin-bottom: 0 !important;
+    height: 100% !important;
+    width: auto !important;
+    max-width: min(96vw, 480px) !important;
+    max-height: 100% !important;
+    object-fit: contain !important;
+    object-position: bottom center !important;
+    display: block !important;
+    margin: 0 auto !important;
     vertical-align: bottom !important;
+    filter: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    position: static !important;
+  }
+
+  [dir="rtl"] #admission-hero .ar-student-hero-img {
+    transform: scaleX(-1) !important;
   }
 
   #admission-hero .ar-student-badge {
-    bottom: 14px !important;
-    right: 50% !important;
-    left: auto !important;
-    transform: translateX(50%) !important;
+    display: none !important;
+  }
+}
+
+/* Responsive Mobile Hero Stage (admission.html max-width: 767px) */
+@media (max-width: 767px) {
+  #admission-hero {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 100svh !important;
+    height: 100svh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    overflow: hidden !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border-bottom: none !important;
+    background: radial-gradient(ellipse 90% 65% at 50% 34%, #FFFFFF 0%, #F4F6F9 68%, #E5E5E5 100%) !important;
+    background-image: radial-gradient(ellipse 90% 65% at 50% 34%, #FFFFFF 0%, #F4F6F9 68%, #E5E5E5 100%) !important;
+    box-sizing: border-box !important;
+  }
+
+  #admission-hero .cl-hero-bg-wrap,
+  #admission-hero .cl-hero-tint,
+  #admission-hero .cl-hero-gradient {
+    display: none !important;
+  }
+
+  #admission-hero .cl-hero-container {
+    position: relative !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 0 !important;
+    border: none !important;
+  }
+
+  /* Prominent Upper/Mid-Screen Student Portrait */
+  #admission-hero .ar-hero-student-card {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    pointer-events: none !important;
+    padding-top: clamp(4.75rem, 11svh, 5.75rem) !important;
+    padding-bottom: 0 !important;
+    padding-inline: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    filter: none !important;
+    box-shadow: none !important;
+    background: none !important;
+    order: unset !important;
+  }
+
+  #admission-hero .ar-student-arch-frame {
+    position: relative !important;
+    width: 100% !important;
+    height: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    border: none !important;
+    background: none !important;
+    box-shadow: none !important;
+    line-height: 0 !important;
+  }
+
+  #admission-hero .ar-student-arch-frame picture {
+    display: flex !important;
+    width: 100% !important;
+    height: auto !important;
+    max-height: 68svh !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    line-height: 0 !important;
+  }
+
+  #admission-hero .ar-student-hero-img {
+    width: clamp(290px, 88vw, 440px) !important;
+    height: auto !important;
+    max-height: 68svh !important;
+    object-fit: contain !important;
+    object-position: top center !important;
+    display: block !important;
+    margin: 0 auto !important;
+    vertical-align: top !important;
+    filter: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    position: static !important;
+  }
+
+  [dir="rtl"] #admission-hero .ar-student-hero-img {
+    transform: scaleX(-1) !important;
+  }
+
+  #admission-hero .ar-student-badge {
+    display: none !important;
   }
 }
 
@@ -14426,8 +14704,8 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   }
 }
 
-/* Layout 2: Tablet (640px to 1023px) - Title/summary top, buttons side by side underneath */
-@media (min-width: 640px) and (max-width: 1023px) {
+/* Layout 2: Tablet (768px to 1023px) - Title/summary top, buttons side by side underneath */
+@media (min-width: 768px) and (max-width: 1023px) {
   .hero-panel {
     display: grid !important;
     grid-template-columns: 1fr 1fr !important;
@@ -14457,38 +14735,249 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   }
 }
 
-/* Layout 3: Phone (below 640px) - One column, stacked */
-@media (max-width: 639px) {
-  .hero-panel-wrap {
-    padding-inline: 16px !important;
+/* ==========================================================================
+   UNIFIED MOBILE FLOATING NAVY HERO CARD (admission.html & academics.html)
+   Scope: max-width: 767px (Mobile ONLY)
+   ========================================================================== */
+@media (max-width: 767px) {
+  /* Reset panel wrap so academics card margins match admission exactly */
+  .hero-panel-wrap,
+  .hero-immersive .hero-panel-wrap {
+    padding-inline: 0 !important;
+    padding-bottom: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: flex-end !important;
+    box-sizing: border-box !important;
+    pointer-events: none !important;
   }
 
-  .hero-panel {
+  /* -------------------------------------------------------------
+     1. IDENTICAL CARD GEOMETRY (admission.html & academics.html)
+     ------------------------------------------------------------- */
+  #admission-hero .cl-hero-text,
+  .hero-panel,
+  .hero-immersive .hero-panel {
+    pointer-events: auto !important;
+    position: relative !important;
+    z-index: 2 !important;
+    flex: 0 0 auto !important;
+    width: calc(100% - 2rem) !important;
+    max-width: 420px !important;
+    min-height: 295px !important;
+    margin: 0 auto max(1.25rem, env(safe-area-inset-bottom)) !important;
+    padding: 1.5rem 1.25rem 1.35rem !important;
+    border-radius: 22px !important;
+    background: rgba(20, 33, 61, 0.94) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.24) !important;
+    color: #FFFFFF !important;
     display: flex !important;
     flex-direction: column !important;
-    gap: 14px !important;
-    margin-bottom: 16px !important;
-    border-radius: 20px !important;
-    padding: 20px 20px !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    gap: 0 !important;
+    order: unset !important;
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
   }
 
-  .hero-panel__title {
-    font-size: clamp(32px, 8vw, 42px) !important;
-  }
-
-  .hero-panel__summary {
-    font-size: 15px !important;
-    max-width: 100% !important;
-  }
-
-  .hero-panel__actions-col {
+  /* -------------------------------------------------------------
+     2. IDENTICAL TITLE COLUMN & HEADINGS
+     ------------------------------------------------------------- */
+  #admission-hero .cl-hero-title-col,
+  .hero-panel__title-col,
+  .hero-immersive .hero-panel__title-col {
+    display: flex !important;
     flex-direction: column !important;
-    gap: 10px !important;
+    align-items: center !important;
+    text-align: center !important;
     width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
   }
 
-  .hero-panel__actions-col .hero-btn {
+  /* Eyebrow */
+  #admission-hero .cl-hero-tag,
+  .hero-panel__eyebrow,
+  .hero-immersive .hero-panel__eyebrow {
+    font-family: var(--font-sans, "DM Sans", system-ui, sans-serif) !important;
+    font-size: 0.72rem !important;
+    line-height: 1.2 !important;
+    letter-spacing: 0.16em !important;
+    text-transform: uppercase !important;
+    font-weight: 700 !important;
+    color: rgba(255, 255, 255, 0.78) !important;
+    margin: 0 0 0.45rem 0 !important;
+    display: block !important;
+    text-align: center !important;
+  }
+
+  /* Single-line Crisp #FFFFFF Serif Heading */
+  #admission-hero .cl-hero-title,
+  .hero-panel__title,
+  .hero-immersive .hero-panel__title {
+    font-family: var(--font-serif, "Lora", Georgia, serif) !important;
+    font-size: clamp(1.85rem, 7.2vw, 2.25rem) !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.01em !important;
+    font-weight: 500 !important;
+    margin: 0 0 0.65rem 0 !important;
+    padding: 0 !important;
+    color: #FFFFFF !important;
+    text-align: center !important;
+    display: block !important;
+    white-space: nowrap !important;
+  }
+
+  #admission-hero .cl-hero-title-solid,
+  #admission-hero .cl-hero-title-outline {
+    display: inline !important;
+    color: #FFFFFF !important;
+    -webkit-text-stroke: 0 !important;
+    font-weight: 500 !important;
+  }
+
+  #admission-hero .cl-hero-title-solid::after {
+    content: " ";
+  }
+
+  /* -------------------------------------------------------------
+     3. IDENTICAL 2-LINE CLAMPED DESCRIPTION
+     ------------------------------------------------------------- */
+  #admission-hero .cl-hero-summary-col,
+  .hero-panel__summary-col,
+  .hero-immersive .hero-panel__summary-col {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
     width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+  }
+
+  #admission-hero .cl-hero-desc,
+  .hero-panel__summary,
+  .hero-immersive .hero-panel__summary {
+    font-family: var(--font-sans, "DM Sans", system-ui, sans-serif) !important;
+    font-size: 0.9rem !important;
+    line-height: 1.48 !important;
+    color: rgba(255, 255, 255, 0.86) !important;
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    margin: 0 auto 1.2rem auto !important;
+    max-width: 32ch !important;
+    text-align: center !important;
+  }
+
+  #admission-hero .cl-desc-extra {
+    display: none !important;
+  }
+
+  /* -------------------------------------------------------------
+     4. IDENTICAL STACKED 48PX PILL BUTTONS
+     ------------------------------------------------------------- */
+  #admission-hero .cl-hero-actions,
+  .hero-panel__actions-col,
+  .hero-immersive .hero-panel__actions-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.65rem !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  #admission-hero .cl-hero-actions .btn,
+  .hero-panel__actions-col .hero-btn,
+  .hero-immersive .hero-panel__actions-col .hero-btn {
+    width: 100% !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    max-height: 48px !important;
+    border-radius: 9999px !important;
+    font-family: var(--font-sans, "DM Sans", system-ui, sans-serif) !important;
+    font-size: 0.92rem !important;
+    font-weight: 600 !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.5rem !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+    padding: 0 1.5rem !important;
+    transition: all 0.2s ease !important;
+  }
+
+  /* Primary Button (Fill Online Form / Explore Curriculum) */
+  #admission-hero .cl-hero-actions .btn.cl-btn-white,
+  .hero-panel__actions-col .hero-btn--primary,
+  .hero-immersive .hero-panel__actions-col .hero-btn--primary {
+    background: #FFFFFF !important;
+    color: #14213D !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  #admission-hero .cl-hero-actions .btn.cl-btn-white:hover,
+  .hero-panel__actions-col .hero-btn--primary:hover,
+  .hero-immersive .hero-panel__actions-col .hero-btn--primary:hover {
+    background: #E5E5E5 !important;
+    color: #14213D !important;
+  }
+
+  /* Secondary Button (Admission Roadmap / Apply for Admission) */
+  #admission-hero .cl-hero-actions .btn.cl-btn-outline,
+  .hero-panel__actions-col .hero-btn--secondary,
+  .hero-immersive .hero-panel__actions-col .hero-btn--secondary {
+    background: transparent !important;
+    color: #FFFFFF !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.45) !important;
+  }
+
+  #admission-hero .cl-hero-actions .btn.cl-btn-outline:hover,
+  .hero-panel__actions-col .hero-btn--secondary:hover,
+  .hero-immersive .hero-panel__actions-col .hero-btn--secondary:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: #FFFFFF !important;
+    color: #FFFFFF !important;
+  }
+
+  /* Button arrow styling */
+  .cl-btn-arrow,
+  .hero-btn__arrow {
+    display: inline-block !important;
+    font-size: 1rem !important;
+    line-height: 1 !important;
+    transition: transform 0.2s ease !important;
+  }
+
+  .cl-hero-actions .btn.cl-btn-white:hover .cl-btn-arrow,
+  .hero-panel__actions-col .hero-btn--primary:hover .hero-btn__arrow {
+    transform: translateX(4px) !important;
+  }
+
+  [dir="rtl"] .cl-btn-arrow,
+  [dir="rtl"] .hero-btn__arrow {
+    transform: scaleX(-1) !important;
+  }
+
+  [dir="rtl"] .cl-hero-actions .btn.cl-btn-white:hover .cl-btn-arrow,
+  [dir="rtl"] .hero-panel__actions-col .hero-btn--primary:hover .hero-btn__arrow {
+    transform: scaleX(-1) translateX(4px) !important;
   }
 }
 
