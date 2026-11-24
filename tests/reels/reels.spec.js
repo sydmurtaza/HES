@@ -37,6 +37,10 @@ async function assertPlaybackSafety(page) {
 
 test.describe('Reel Theatre Test Suite', () => {
 
+  test.beforeEach(async ({ page }) => {
+    await page.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
+  });
+
   test('P01: Tap play on reel 1 on phone: picture starts within 1s and data-state becomes playing', async ({ page }) => {
     await page.goto('/campus-life.html');
     const isMobile = page.viewportSize().width < 1024;
@@ -490,10 +494,12 @@ test.describe('Reel Theatre Test Suite', () => {
     await assertPlaybackSafety(page);
   });
 
-  test('N16: JavaScript disabled: noscript film list shows', async ({ browser }) => {
+  test('N16: JavaScript disabled: noscript film list shows', async ({ browser, baseURL }) => {
     const context = await browser.newContext({ javaScriptEnabled: false });
     const noJsPage = await context.newPage();
-    await noJsPage.goto('http://127.0.0.1:8080/campus-life.html');
+    await noJsPage.route(/fonts\.(googleapis|gstatic)\.com/, route => route.abort());
+    const targetUrl = (baseURL || 'http://127.0.0.1:3000') + '/campus-life.html';
+    await noJsPage.goto(targetUrl);
     const noscriptCount = await noJsPage.locator('.cl-noscript-card').count();
     expect(noscriptCount).toBe(4);
     await context.close();

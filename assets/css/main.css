@@ -11545,10 +11545,270 @@ html:not(.js) .bd-noscript-stack {
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* ==========================================================================
+   GLOBAL SKELETON LOADING STATE (Site-Wide 1:1 Architectural Match - White Theme)
+   ========================================================================== */
+.hes-skeleton-screen {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 999999;
+  background-color: #FFFFFF;
+  overflow: hidden;
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 350ms cubic-bezier(0.22, 1, 0.36, 1),
+              visibility 350ms cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+
+.hes-skeleton-screen.is-loaded {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.hes-sk-hero-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: #FFFFFF;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.hes-sk-backdrop {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 60%, #F1F4F9 100%);
+  z-index: 0;
+}
+
+/* Nav Skeleton (Matches floating pill .navbar-inner) */
+.hes-sk-nav-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-top: 20px;
+  padding-inline: 24px;
+  box-sizing: border-box;
+}
+
+.hes-sk-nav {
+  width: 100%;
+  max-width: 1200px;
+  height: 60px;
+  border-radius: 9999px;
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 33, 61, 0.08);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  padding: 0 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+
+.hes-sk-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Shimmer elements (Soft light palette) */
+.hes-sk-circle,
+.hes-sk-brand-text,
+.hes-sk-pill,
+.hes-sk-eyebrow-dark,
+.hes-sk-title-dark,
+.hes-sk-line-dark {
+  background: linear-gradient(
+    90deg,
+    rgba(20, 33, 61, 0.05) 0%,
+    rgba(20, 33, 61, 0.12) 50%,
+    rgba(20, 33, 61, 0.05) 100%
+  );
+  background-size: 200% 100%;
+  animation: hes-skeleton-shimmer 1.5s infinite ease-in-out;
+}
+
+.hes-sk-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.hes-sk-brand-text {
+  width: 110px;
+  height: 14px;
+  border-radius: 9999px;
+}
+
+.hes-sk-nav-links {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hes-sk-pill {
+  width: 60px;
+  height: 12px;
+  border-radius: 9999px;
+}
+
+.hes-sk-pill.is-active-pill {
+  width: 74px;
+  height: 26px;
+  border-radius: 9999px;
+}
+
+.hes-sk-nav-cta {
+  width: 110px;
+  height: 38px;
+  border-radius: 9999px;
+  background: #14213D;
+  opacity: 0.9;
+}
+
+/* Anchored Bottom Hero Panel Skeleton (Exact 1:1 match for .hero-panel) */
+.hes-sk-panel-wrap {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  padding-inline: 24px;
+  padding-bottom: 32px;
+  box-sizing: border-box;
+}
+
+.hes-sk-panel {
+  width: 100%;
+  max-width: 1260px;
+  background: #FFFFFF;
+  border: 1px solid rgba(20, 33, 61, 0.09);
+  border-radius: 24px;
+  padding: 28px 36px;
+  box-sizing: border-box;
+  box-shadow: 0 16px 40px -8px rgba(20, 33, 61, 0.09);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.hes-sk-col-title {
+  flex: 0 0 auto;
+  min-width: 240px;
+}
+
+.hes-sk-eyebrow-dark {
+  width: 130px;
+  height: 11px;
+  border-radius: 9999px;
+  margin-bottom: 10px;
+}
+
+.hes-sk-title-dark {
+  width: 200px;
+  height: 48px;
+  border-radius: 8px;
+}
+
+.hes-sk-col-summary {
+  flex: 1 1 auto;
+  max-width: 440px;
+}
+
+.hes-sk-line-dark {
+  height: 14px;
+  border-radius: 4px;
+  margin-bottom: 8px;
+}
+
+.hes-sk-line-full { width: 100%; }
+.hes-sk-line-sub { width: 70%; margin-bottom: 0; }
+
+.hes-sk-col-actions {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.hes-sk-btn-white {
+  width: 170px;
+  height: 44px;
+  border-radius: 9999px;
+  background: #14213D;
+  opacity: 0.9;
+}
+
+.hes-sk-btn-outline {
+  width: 170px;
+  height: 44px;
+  border-radius: 9999px;
+  border: 1.5px solid rgba(20, 33, 61, 0.16);
+  background: rgba(20, 33, 61, 0.03);
+}
+
+@media (max-width: 900px) {
+  .hes-sk-nav-wrap {
+    padding-top: 14px;
+    padding-inline: 16px;
+  }
+  .hes-sk-nav-links {
+    display: none;
+  }
+  .hes-sk-panel-wrap {
+    padding-inline: 16px;
+    padding-bottom: 24px;
+  }
+  .hes-sk-panel {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    padding: 20px;
+  }
+  .hes-sk-col-title {
+    min-width: 0;
+  }
+  .hes-sk-title-dark {
+    width: 65%;
+    height: 38px;
+  }
+  .hes-sk-col-summary {
+    max-width: 100%;
+  }
+  .hes-sk-col-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .hes-sk-btn-white,
+  .hes-sk-btn-outline {
+    width: 100%;
+    height: 42px;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .skeleton {
+  .hes-sk-circle,
+  .hes-sk-brand-text,
+  .hes-sk-pill,
+  .hes-sk-eyebrow-dark,
+  .hes-sk-title-dark,
+  .hes-sk-line-dark {
     animation: none !important;
     background: rgba(20, 33, 61, 0.08) !important;
+  }
+  .hes-skeleton-screen {
+    transition: none !important;
   }
 }
 .gallery-empty-state {
@@ -15329,18 +15589,13 @@ body.reel-viewer-open {
   }
 
   .cl-chips {
-    overflow-x: auto;
-    flex-wrap: nowrap;
-    scroll-snap-type: x mandatory;
-    min-width: 0;
-    max-width: 100%;
-    width: 100%;
-    padding-bottom: 6px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
     margin: 0;
-    padding-left: 2px;
-    padding-right: 8px;
-    scrollbar-width: none;
-    -webkit-overflow-scrolling: touch;
+    padding: 0;
+    overflow-x: visible;
+    width: 100%;
   }
 
   .cl-chips::-webkit-scrollbar {
@@ -15349,9 +15604,9 @@ body.reel-viewer-open {
 
   .cl-chip {
     flex-shrink: 0;
-    scroll-snap-align: start;
     font-size: 13px;
-    padding: 6px 16px;
+    padding: 6px 12px;
+    min-height: 38px;
   }
 
   .cl-theatre {

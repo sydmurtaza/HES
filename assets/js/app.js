@@ -9,7 +9,28 @@ try {
   localStorage.removeItem("hes-perf-mode");
 } catch (e) {}
 
+// Global skeleton loader dismiss handler
+function triggerSkeletonDismiss() {
+  if (typeof window.__hesHideSkeleton === "function") {
+    window.__hesHideSkeleton();
+  } else {
+    const sk = document.getElementById("hesSkeleton");
+    if (sk && !sk.classList.contains("is-loaded")) {
+      setTimeout(() => {
+        sk.classList.add("is-loaded");
+        setTimeout(() => {
+          if (sk.parentNode) sk.remove();
+        }, 400);
+      }, 350);
+    }
+  }
+}
+
+window.addEventListener("load", triggerSkeletonDismiss);
+setTimeout(triggerSkeletonDismiss, 1200);
+
 document.addEventListener("DOMContentLoaded", () => {
+  triggerSkeletonDismiss();
   initScrollReveal();
   initTheme();
   initLanguage();

@@ -55,13 +55,59 @@
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="assets/css/page-gateway.css?v=2063">
-  <link rel="stylesheet" href="assets/css/main.css?v=2081">
+  <link rel="stylesheet" href="assets/css/main.css?v=2089">
 
   <!-- Cloudflare Turnstile Captcha API -->
   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body class="page-contact">
   <a href="#main-content" class="skip-to-content">Skip to main content</a>
+
+    <!-- Global Skeleton Loading State (1:1 Architectural Match) -->
+  <div id="hesSkeleton" class="hes-skeleton-screen" aria-hidden="true">
+    <div class="hes-sk-hero-stage">
+      <!-- Floating Navbar Skeleton -->
+      <div class="hes-sk-nav-wrap">
+        <div class="hes-sk-nav">
+          <div class="hes-sk-brand">
+            <div class="hes-sk-circle"></div>
+            <div class="hes-sk-brand-text"></div>
+          </div>
+          <div class="hes-sk-nav-links">
+            <div class="hes-sk-pill"></div>
+            <div class="hes-sk-pill"></div>
+            <div class="hes-sk-pill is-active-pill"></div>
+            <div class="hes-sk-pill"></div>
+            <div class="hes-sk-pill"></div>
+            <div class="hes-sk-pill"></div>
+          </div>
+          <div class="hes-sk-nav-cta"></div>
+        </div>
+      </div>
+
+      <!-- Backdrop Shimmer Texture -->
+      <div class="hes-sk-backdrop"></div>
+
+      <!-- Anchored Bottom Hero Panel Skeleton (Exact match for .hero-panel) -->
+      <div class="hes-sk-panel-wrap">
+        <div class="hes-sk-panel">
+          <div class="hes-sk-col-title">
+            <div class="hes-sk-eyebrow-dark"></div>
+            <div class="hes-sk-title-dark"></div>
+          </div>
+          <div class="hes-sk-col-summary">
+            <div class="hes-sk-line-dark hes-sk-line-full"></div>
+            <div class="hes-sk-line-dark hes-sk-line-sub"></div>
+          </div>
+          <div class="hes-sk-col-actions">
+            <div class="hes-sk-btn-white"></div>
+            <div class="hes-sk-btn-outline"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <noscript><style>#hesSkeleton { display: none !important; }</style></noscript>
 
   <!-- Navbar -->
   <header class="navbar">
@@ -502,9 +548,9 @@
   </div>
 
   <script src="assets/js/siteContent.js?v=2080"></script>
-  <script src="assets/js/page-gateway.js?v=2063"></script>
+  <script src="assets/js/page-gateway.js?v=2089"></script>
   <script src="assets/js/toast.js?v=2046"></script>
   <script src="assets/js/analytics.js?v=2046" defer></script>
-  <script src="assets/js/app.js?v=2080"></script>
+  <script src="assets/js/app.js?v=2087"></script>
 </body>
 </html>

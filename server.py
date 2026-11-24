@@ -5,9 +5,20 @@ import os
 import json
 import re
 import time
+import socket
+import mimetypes
 import urllib.request
 import urllib.parse
 from datetime import datetime
+
+# Initialize MIME types for media streaming
+mimetypes.init()
+mimetypes.add_type("video/mp4", ".mp4")
+mimetypes.add_type("video/webm", ".webm")
+mimetypes.add_type("image/webp", ".webp")
+mimetypes.add_type("image/svg+xml", ".svg")
+mimetypes.add_type("application/javascript", ".js")
+mimetypes.add_type("text/css", ".css")
 
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
 
@@ -15,6 +26,17 @@ PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 3000
 RATE_LIMIT_WINDOW = 600  # 10 minutes
 RATE_LIMIT_MAX = 5       # Max 5 submissions per 10 mins per IP
 IP_SUBMISSION_HISTORY = {}
+
+def get_local_ip():
+    try:
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.settimeout(0.2)
+        s.connect(("8.8.8.8", 80))
+        ip = s.getsockname()[0]
+        s.close()
+        return ip
+    except Exception:
+        return "127.0.0.1"
 
 def is_rate_limited(ip):
     now = time.time()
@@ -45,27 +67,33 @@ def sanitize_multiline(val, max_len=3000):
     return val.strip()[:max_len]
 
 class HESHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
+    protocol_version = "HTTP/1.1"
+
     def end_headers(self):
         # Cache control for local preview
         self.send_header("Cache-Control", "no-cache, no-store, must-revalidate")
         self.send_header("Pragma", "no-cache")
         self.send_header("Expires", "0")
 
-        # Security Headers (Native host implementation)
+        # CORS headers for media, fonts, and API requests
+        self.send_header("Access-Control-Allow-Origin", "*")
+        self.send_header("Access-Control-Allow-Headers", "Range, Content-Type, Accept, Authorization")
+        self.send_header("Access-Control-Expose-Headers", "Content-Range, Content-Length, Accept-Ranges")
+
+        # Security Headers
         self.send_header("X-Content-Type-Options", "nosniff")
         self.send_header("X-Frame-Options", "DENY")
         self.send_header("Referrer-Policy", "strict-origin-when-cross-origin")
         self.send_header("Permissions-Policy", "camera=(), microphone=(), geolocation=(), payment=()")
 
         # Content-Security-Policy (Report-Only during staging)
-        # Built only from actual origins used in audit:
-        # YouTube, Google Maps, Google Fonts, Cloudflare Turnstile
         csp = (
             "default-src 'self'; "
             "script-src 'self' 'unsafe-inline' https://www.youtube.com https://challenges.cloudflare.com; "
             "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "
             "font-src 'self' https://fonts.gstatic.com data:; "
             "img-src 'self' data: https:; "
+            "media-src 'self' data: blob: https:; "
             "frame-src https://www.youtube.com https://www.google.com https://www.youtube-nocookie.com https://challenges.cloudflare.com; "
             "connect-src 'self' https://challenges.cloudflare.com; "
             "object-src 'none'; "
@@ -74,9 +102,6 @@ class HESHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             "frame-ancestors 'none';"
         )
         self.send_header("Content-Security-Policy-Report-Only", csp)
-
-        # TODO: Enable Strict-Transport-Security after custom domain is live on HTTPS
-        # self.send_header("Strict-Transport-Security", "max-age=63072000; includeSubDomains; preload")
 
         super().end_headers()
 
@@ -96,6 +121,135 @@ class HESHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
                 except Exception:
                     pass
         super().send_error(code, message, explain)
+
+    def parse_range_header(self, range_header, total_size):
+        """Parse HTTP Range header: 'bytes=start-end'"""
+        if not range_header or not range_header.startswith("bytes="):
+            return None
+        val = range_header[6:].strip()
+        if "," in val:
+            val = val.split(",")[0].strip()
+        parts = val.split("-")
+        if len(parts) != 2:
+            return None
+        start_str, end_str = parts[0].strip(), parts[1].strip()
+        try:
+            if start_str and end_str:
+                start = int(start_str)
+                end = int(end_str)
+            elif start_str:
+                start = int(start_str)
+                end = total_size - 1
+            elif end_str:
+                start = max(0, total_size - int(end_str))
+                end = total_size - 1
+            else:
+                return None
+            if start < 0 or start > end or end >= total_size:
+                return "INVALID"
+            return start, end, end - start + 1
+        except ValueError:
+            return None
+
+    def send_head(self):
+        """Serve GET/HEAD with full HTTP Range request (206 Partial Content) support."""
+        path = self.translate_path(self.path)
+        if os.path.isdir(path):
+            parts = urllib.parse.urlsplit(self.path)
+            if not parts.path.endswith('/'):
+                self.send_response(301)
+                new_parts = (parts[0], parts[1], parts[2] + '/', parts[3], parts[4])
+                new_url = urllib.parse.urlunsplit(new_parts)
+                self.send_header("Location", new_url)
+                self.send_header("Content-Length", "0")
+                self.end_headers()
+                return None
+            for index in "index.html", "index.htm":
+                index_path = os.path.join(path, index)
+                if os.path.exists(index_path):
+                    path = index_path
+                    break
+            else:
+                return self.list_directory(path)
+
+        ctype = self.guess_type(path)
+        try:
+            f = open(path, 'rb')
+        except OSError:
+            self.send_error(404, "File not found")
+            return None
+
+        try:
+            fs = os.fstat(f.fileno())
+            total_size = fs.st_size
+            range_header = self.headers.get("Range")
+            range_parsed = self.parse_range_header(range_header, total_size)
+
+            if range_parsed == "INVALID":
+                self.send_response(416, "Range Not Satisfiable")
+                self.send_header("Content-Range", f"bytes */{total_size}")
+                self.send_header("Accept-Ranges", "bytes")
+                self.end_headers()
+                f.close()
+                return None
+
+            if range_parsed:
+                start, end, length = range_parsed
+                self.send_response(206, "Partial Content")
+                self.send_header("Content-Type", ctype)
+                self.send_header("Content-Range", f"bytes {start}-{end}/{total_size}")
+                self.send_header("Content-Length", str(length))
+                self.send_header("Accept-Ranges", "bytes")
+                self.end_headers()
+                self.range_start = start
+                self.range_length = length
+                return f
+
+            # Normal full response
+            self.send_response(200, "OK")
+            self.send_header("Content-Type", ctype)
+            self.send_header("Content-Length", str(total_size))
+            self.send_header("Accept-Ranges", "bytes")
+            self.end_headers()
+            self.range_start = 0
+            self.range_length = total_size
+            return f
+        except Exception:
+            f.close()
+            raise
+
+    def do_GET(self):
+        """Serve a GET request with Range streaming and client disconnect handling."""
+        f = self.send_head()
+        if f:
+            try:
+                start = getattr(self, "range_start", 0)
+                length = getattr(self, "range_length", None)
+                if start:
+                    f.seek(start)
+                if length is not None:
+                    self.copy_range(f, self.wfile, length)
+                else:
+                    self.copyfile(f, self.wfile)
+            except (ConnectionResetError, BrokenPipeError):
+                # Normal when client pauses, seeks, or leaves video stream
+                pass
+            finally:
+                f.close()
+
+    def copy_range(self, source, dest, length):
+        buffer_size = 64 * 1024
+        bytes_left = length
+        while bytes_left > 0:
+            chunk_size = min(buffer_size, bytes_left)
+            chunk = source.read(chunk_size)
+            if not chunk:
+                break
+            try:
+                dest.write(chunk)
+            except (ConnectionResetError, BrokenPipeError):
+                break
+            bytes_left -= len(chunk)
 
     def do_POST(self):
         # Handle form submissions at /api/inquiry or /api/contact
@@ -269,8 +423,8 @@ class HESHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header("Content-Type", "application/json; charset=utf-8")
         self.send_header("Content-Length", str(len(body)))
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Range")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
         self.end_headers()
         self.wfile.write(body)
 
@@ -278,8 +432,8 @@ class HESHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         # Handle CORS preflight
         self.send_response(204)
         self.send_header("Access-Control-Allow-Origin", "*")
-        self.send_header("Access-Control-Allow-Headers", "Content-Type")
-        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS")
+        self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, Range")
+        self.send_header("Access-Control-Allow-Methods", "POST, OPTIONS, GET")
         self.send_header("Access-Control-Max-Age", "86400")
         self.end_headers()
 
@@ -290,16 +444,19 @@ class ThreadingServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 if __name__ == "__main__":
     web_dir = os.path.dirname(os.path.abspath(__file__))
     os.chdir(web_dir)
+    local_ip = get_local_ip()
     handler = lambda *args, **kwargs: HESHTTPRequestHandler(*args, directory=web_dir, **kwargs)
     try:
         with ThreadingServer(("", PORT), handler) as httpd:
             print(f"\n=======================================================")
-            print(f"  Hadi Education System (HES) Web Server")
-            print(f"  URL: http://localhost:{PORT}")
-            print(f"  Serving directory: {web_dir}")
-            print(f"  Security Headers: Active (CSP Report-Only)")
-            print(f"  API Endpoint: POST http://localhost:{PORT}/api/inquiry")
-            print(f"  Custom 404: Active (404.html)")
+            print(f"  Hadi Education System (HES) - All-In-One Web Server")
+            print(f"  Local URL:    http://localhost:{PORT}")
+            print(f"  Network URL:  http://{local_ip}:{PORT}")
+            print(f"  Serving Dir:  {web_dir}")
+            print(f"  Media Stream: HTTP Range (206 Partial Content) Active")
+            print(f"  Forms API:    POST http://localhost:{PORT}/api/inquiry")
+            print(f"  Security:     Active (CSP Report-Only, CORS, Anti-Spam)")
+            print(f"  Custom 404:   Active (404.html)")
             print(f"=======================================================\n")
             httpd.serve_forever()
     except KeyboardInterrupt:
