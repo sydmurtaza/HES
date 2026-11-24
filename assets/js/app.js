@@ -3306,6 +3306,8 @@ function initSpecimenSwitcher() {
       titleUr: "ناظرہ قرآن و تجوید",
       specEn: "Flawless Makharij pronunciation, rules of Noon Sakinah and Meem Sakinah, and rhythmic recitation with proper phonetics.",
       specUr: "مخارج کی درست ادائیگی، نون ساکنہ اور میم ساکنہ کے قواعد اور ترتیل کے ساتھ تلاوت۔",
+      cadenceLabelEn: "CADENCE",
+      cadenceLabelUr: "اوقات",
       cadenceEn: "Daily 45-Min Session",
       cadenceUr: "روزانہ 45 منٹ کی کلاس",
       focusEn: "Makharij & Tajweed Rules",
@@ -3319,6 +3321,8 @@ function initSpecimenSwitcher() {
       titleUr: "قرآنی تعلیم و فقہ اسلامی",
       specEn: "Practical understanding of Islamic jurisprudence, biographies of the Masoomeen (AS), and daily life ethics.",
       specUr: "فقہ اسلامی کے احکام کی عملی سمجھ، سیرتِ معصومینؑ اور روزمرہ اخلاقیات۔",
+      cadenceLabelEn: "CADENCE",
+      cadenceLabelUr: "اوقات",
       cadenceEn: "Daily Session",
       cadenceUr: "روزانہ پیریڈ",
       focusEn: "Ethics & Jurisprudence",
@@ -3328,40 +3332,76 @@ function initSpecimenSwitcher() {
       index: 2,
       eyebrowEn: "ACADEMIC PILLAR • TRACK 03",
       eyebrowUr: "تعلیمی ستون • ٹریک 03",
-      titleEn: "Mathematics & Analytical Logic",
-      titleUr: "ریاضی اور تجزیاتی منطق",
-      specEn: "Arithmetic foundations advancing to geometry, algebra, trigonometry, and analytical calculus.",
-      specUr: "بنیادی حسابیات، جیومیٹری، الجبرا، مثلثیات اور کیلکولس کی جامع تفہیم۔",
-      cadenceEn: "Daily Double-Period",
-      cadenceUr: "روزانہ ڈبل پیریڈ",
-      focusEn: "FBISE Mathematics Standards",
-      focusUr: "فیڈرل بورڈ میتھ معیار"
+      titleEn: "Matric (Biology & Computer Science)",
+      titleUr: "میٹرک (بائیولوجی و کمپیوٹر سائنس)",
+      specEn: "Comprehensive SSC Part-I & II preparation under the Federal Board (FBISE), offering dedicated pathways in both Biology and Computer Science alongside Physics, Chemistry, and Mathematics.",
+      specUr: "فیڈرل بورڈ (ایف بی آئی ایس ای) کے تحت ایس ایس سی پارٹ اول و دوم کی جامع تیاری، جس میں فزکس، کیمسٹری اور ریاضی کے ساتھ بائیولوجی اور کمپیوٹر سائنس دونوں کے مخصوص شعبے شامل ہیں۔",
+      cadenceLabelEn: "CADENCE / AFFILIATION",
+      cadenceLabelUr: "الحاق و اوقات",
+      cadenceEn: "FBISE Affiliated (SSC)",
+      cadenceUr: "ایف بی آئی ایس ای ملحقہ (ایس ایس سی)",
+      focusEn: "Biology, Computer Science, Physics & Chemistry",
+      focusUr: "بائیولوجی، کمپیوٹر سائنس، فزکس و کیمسٹری"
     },
     {
       index: 3,
       eyebrowEn: "ACADEMIC PILLAR • TRACK 04",
       eyebrowUr: "تعلیمی ستون • ٹریک 04",
-      titleEn: "Laboratory Sciences",
-      titleUr: "سائنسی لیبارٹریز",
-      specEn: "Hands-on experimental demonstrations in Physics, Chemistry, and Biology laboratories led by senior specialists.",
-      specUr: "سینئر ماہرین کی زیرِ نگرانی فزکس، کیمسٹری اور بائیولوجی کے عملی تجربات۔",
-      cadenceEn: "Daily Theory & Lab Sessions",
-      cadenceUr: "روزانہ تھیوری اور لیب سیشن",
-      focusEn: "Experimental Physics & Chemistry",
-      focusUr: "طبیعیات و کیمیا کے تجربات"
+      titleEn: "FSc Pre-Medical",
+      titleUr: "ایف ایس سی پری میڈیکل",
+      specEn: "Rigorous HSSC Part-I & II Federal Board curriculum designed for aspiring medical and life-sciences students, combining theoretical depth with practical laboratory training.",
+      specUr: "طبی اور لائف سائنسز کے طلبہ کے لیے فیڈرل بورڈ کا جامع ایچ ایس ایس سی پارٹ اول و دوم کا نصاب، جو نظریاتی گہرائی اور عملی لیبارٹری تربیت کا امتزاج ہے۔",
+      cadenceLabelEn: "CADENCE / AFFILIATION",
+      cadenceLabelUr: "الحاق و اوقات",
+      cadenceEn: "FBISE Affiliated (HSSC)",
+      cadenceUr: "ایف بی آئی ایس ای ملحقہ (ایچ ایس ایس سی)",
+      focusEn: "Biology, Physics & Chemistry",
+      focusUr: "بائیولوجی، فزکس و کیمسٹری"
     },
     {
       index: 4,
       eyebrowEn: "ACADEMIC PILLAR • TRACK 05",
       eyebrowUr: "تعلیمی ستون • ٹریک 05",
-      titleEn: "English & Computer Science",
-      titleUr: "انگریزی اور کمپیوٹر سائنس",
-      specEn: "Bilingual fluency, creative writing, public discourse, computer coding, and modern digital literacy.",
-      specUr: "دو لسانی روانی، تحریری و تقریری صلاحیت، کمپیوٹر کوڈنگ اور ڈیجیٹل مہارت۔",
-      cadenceEn: "Daily Language & IT Labs",
-      cadenceUr: "روزانہ لینگویج اور آئی ٹی لیب",
-      focusEn: "Fluency, Coding & ICT",
-      focusUr: "روانی، کوڈنگ اور آئی ٹی"
+      titleEn: "FSc Pre-Engineering",
+      titleUr: "ایف ایس سی پری انجینئرنگ",
+      specEn: "Focused HSSC Part-I & II Federal Board engineering track emphasizing analytical problem-solving, advanced mathematics, and applied physical sciences.",
+      specUr: "فیڈرل بورڈ کے تحت انجینئرنگ کے طلبہ کے لیے ایچ ایس ایس سی پارٹ اول و دوم کا مخصوص نصاب، جو تجزیاتی مسائل کے حل، ایڈوانس ریاضی اور طبعی علوم پر مرکوز ہے۔",
+      cadenceLabelEn: "CADENCE / AFFILIATION",
+      cadenceLabelUr: "الحاق و اوقات",
+      cadenceEn: "FBISE Affiliated (HSSC)",
+      cadenceUr: "ایف بی آئی ایس ای ملحقہ (ایچ ایس ایس سی)",
+      focusEn: "Mathematics, Physics & Chemistry",
+      focusUr: "ریاضی، فزکس و کیمسٹری"
+    },
+    {
+      index: 5,
+      eyebrowEn: "ACADEMIC PILLAR • TRACK 06",
+      eyebrowUr: "تعلیمی ستون • ٹریک 06",
+      titleEn: "FA (Arts & Information Technology)",
+      titleUr: "ایف اے (آرٹس و انفارمیشن ٹیکنالوجی)",
+      specEn: "Flexible HSSC Part-I & II Federal Board humanities and computing program offering specialized subject combinations in General Arts and Information Technology (FA-IT).",
+      specUr: "فیڈرل بورڈ کے تحت ہیومینیٹیز اور کمپیوٹنگ کا لچکدار ایچ ایس ایس سی پروگرام، جو جنرل آرٹس اور انفارمیشن ٹیکنالوجی (FA-IT) کے مضامین فراہم کرتا ہے۔",
+      cadenceLabelEn: "CADENCE / AFFILIATION",
+      cadenceLabelUr: "الحاق و اوقات",
+      cadenceEn: "FBISE Affiliated (HSSC)",
+      cadenceUr: "ایف بی آئی ایس ای ملحقہ (ایچ ایس ایس سی)",
+      focusEn: "Humanities, Social Sciences & IT",
+      focusUr: "ہیومینیٹیز، سوشل سائنسز و آئی ٹی"
+    },
+    {
+      index: 6,
+      eyebrowEn: "ACADEMIC PILLAR • TRACK 07",
+      eyebrowUr: "تعلیمی ستون • ٹریک 07",
+      titleEn: "ICS (Intermediate in Computer Science)",
+      titleUr: "آئی سی ایس (انٹرمیڈیٹ ان کمپیوٹر سائنس)",
+      specEn: "Specialized HSSC Part-I & II Federal Board computing track combining core computer science and programming fundamentals with Mathematics and Physics or Statistics.",
+      specUr: "فیڈرل بورڈ کے تحت کمپیوٹر سائنس اور پروگرامنگ کے بنیادی اصولوں، ریاضی، اور فزکس یا شماریات پر مشتمل ایچ ایس ایس سی کا مخصوص نصاب۔",
+      cadenceLabelEn: "CADENCE / AFFILIATION",
+      cadenceLabelUr: "الحاق و اوقات",
+      cadenceEn: "FBISE Affiliated (HSSC)",
+      cadenceUr: "ایف بی آئی ایس ای ملحقہ (ایچ ایس ایس سی)",
+      focusEn: "Computer Science, Mathematics & Physics / Statistics",
+      focusUr: "کمپیوٹر سائنس، ریاضی اور فزکس / شماریات"
     }
   ];
 
@@ -3390,6 +3430,12 @@ function initSpecimenSwitcher() {
         descEl.setAttribute("data-en", data.specEn);
         descEl.setAttribute("data-ur", data.specUr);
         descEl.textContent = isUrdu ? data.specUr : data.specEn;
+      }
+      const cadenceLabelEl = document.getElementById("specimenCadenceLabel");
+      if (cadenceLabelEl && data.cadenceLabelEn) {
+        cadenceLabelEl.setAttribute("data-en", data.cadenceLabelEn);
+        cadenceLabelEl.setAttribute("data-ur", data.cadenceLabelUr);
+        cadenceLabelEl.textContent = isUrdu ? data.cadenceLabelUr : data.cadenceLabelEn;
       }
       if (cadenceEl) {
         cadenceEl.setAttribute("data-en", data.cadenceEn);

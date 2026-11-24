@@ -13256,8 +13256,12 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 #admission-hero {
   background-color: #FFFFFF !important;
   background-image: none !important;
-  height: clamp(480px, 62vh, 660px) !important;
-  min-height: 480px !important;
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  min-height: max(100svh, 600px) !important;
+  height: 100vh !important;
+  height: 100svh !important;
   display: flex !important;
   align-items: stretch !important;
   padding-top: clamp(80px, 10vh, 100px) !important;
@@ -13266,7 +13270,6 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   border-bottom: none !important;
   box-shadow: none !important;
   overflow: hidden !important;
-  position: relative !important;
   box-sizing: border-box !important;
 }
 
@@ -13295,10 +13298,10 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 #admission-hero .cl-hero-text {
   display: flex !important;
   flex-direction: column !important;
-  justify-content: flex-end !important;
-  align-self: flex-end !important;
-  padding-top: 20px !important;
-  padding-bottom: 3.5rem !important;
+  justify-content: center !important;
+  align-self: center !important;
+  padding-top: 10px !important;
+  padding-bottom: clamp(20px, 4vh, 40px) !important;
   max-width: 620px !important;
   text-align: left !important;
 }
@@ -13404,6 +13407,7 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
   margin: 0 !important;
   width: 100% !important;
   max-width: 100% !important;
+  height: 100% !important;
   flex: none !important;
   filter: none !important;
   box-shadow: none !important;
@@ -13430,8 +13434,8 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 
 #admission-hero .ar-student-hero-img {
   display: block !important;
-  height: calc(clamp(480px, 62vh, 660px) - clamp(80px, 10vh, 100px)) !important;
-  max-height: calc(clamp(480px, 62vh, 660px) - clamp(80px, 10vh, 100px)) !important;
+  height: calc(100vh - clamp(80px, 10vh, 100px)) !important;
+  max-height: calc(100vh - clamp(80px, 10vh, 100px)) !important;
   width: auto !important;
   max-width: 100% !important;
   object-fit: contain !important;
@@ -13459,7 +13463,7 @@ html[data-theme="dark"] .footer-skyline .skyline-fill,
 /* Admissions Badge & Static Green Dot */
 #admission-hero .ar-student-badge {
   position: absolute !important;
-  bottom: 24px !important;
+  bottom: 28px !important;
   right: 20px !important;
   left: auto !important;
   transform: none !important;
