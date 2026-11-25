@@ -1,0 +1,11 @@
+{
+  "name": "hes-menu-tests",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "test": "playwright test"
+  },
+  "dependencies": {
+    "@playwright/test": "^1.65.1"
+  }
+}

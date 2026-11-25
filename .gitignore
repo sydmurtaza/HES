@@ -20,4 +20,7 @@ node_modules/
 tests/reels/node_modules/
 tests/reels/test-results/
 tests/reels/playwright-report/
+tests/menu/node_modules/
+tests/menu/test-results/
+tests/menu/playwright-report/
 

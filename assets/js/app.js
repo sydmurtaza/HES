@@ -462,30 +462,137 @@ function initCampusVideo() {
 }
 
 /* ==========================================================================
-   4. MOBILE SLIDE-IN DRAWER
+   4. MOBILE BENTO SHEET MENU
    ========================================================================== */
 function initMobileDrawer() {
   const openBtn = document.querySelector(".menu-toggle-btn");
-  const closeBtn = document.querySelector(".drawer-close");
+  const closeBtn = document.querySelector(".m-menu-close, .drawer-close");
   const drawer = document.querySelector(".mobile-drawer");
   const overlay = document.querySelector(".drawer-overlay");
+  const sheet = drawer ? drawer.querySelector(".m-menu-sheet") : null;
+  const photoWrap = drawer ? drawer.querySelector(".m-menu-photo-wrap") : null;
+  const photoImg = drawer ? drawer.querySelector(".m-menu-photo") : null;
 
   if (!drawer || !overlay) return;
 
+  if (openBtn) {
+    openBtn.setAttribute("aria-expanded", "false");
+    openBtn.setAttribute("aria-label", "Open menu");
+  }
+
+  // Fallback if campus photo fails to load: hide broken img so solid Navy #14213D shows
+  if (photoImg) {
+    photoImg.addEventListener("error", () => {
+      photoImg.classList.add("is-error");
+    });
+    if (photoImg.complete && photoImg.naturalWidth === 0) {
+      photoImg.classList.add("is-error");
+    }
+  }
+
+  // Highlight current page tile from location.pathname
+  const syncCurrentPageTile = () => {
+    const rawName = (window.location.pathname.split("/").pop() || "index.html").toLowerCase();
+    const currentPage = rawName === "" ? "index.html" : rawName;
+    const tiles = drawer.querySelectorAll(".m-menu-tile");
+    tiles.forEach((tile) => {
+      const pageAttr = (tile.getAttribute("data-page") || "").toLowerCase();
+      const hrefPage = (tile.getAttribute("href") || "").split("?")[0].split("#")[0].toLowerCase();
+      const isMatch = pageAttr === currentPage || hrefPage === currentPage;
+      if (isMatch) {
+        tile.classList.add("is-current");
+        tile.setAttribute("aria-current", "page");
+      } else {
+        tile.classList.remove("is-current");
+        tile.removeAttribute("aria-current");
+      }
+    });
+  };
+  syncCurrentPageTile();
+
+  // Populate WhatsApp & Email action buttons from siteContent.info (hide if missing)
+  const syncContactLinks = () => {
+    const waBtn = drawer.querySelector(".m-menu-wa");
+    const emailBtn = drawer.querySelector(".m-menu-email");
+    const info = typeof siteContent !== "undefined" && siteContent && siteContent.info ? siteContent.info : null;
+
+    if (waBtn) {
+      const waRaw = info ? (info.whatsapp !== undefined ? info.whatsapp : (info.contact ? info.contact.whatsappNumber : "")) : "";
+      const waDigits = String(waRaw || "").replace(/\D/g, "");
+      if (waDigits) {
+        waBtn.setAttribute("href", `https://wa.me/${waDigits}`);
+        waBtn.hidden = false;
+      } else {
+        waBtn.removeAttribute("href");
+        waBtn.hidden = true;
+      }
+    }
+
+    if (emailBtn) {
+      const emailRaw = info ? (info.email !== undefined ? info.email : (info.contact ? info.contact.email : "")) : "";
+      const emailVal = String(emailRaw || "").trim();
+      if (emailVal) {
+        emailBtn.setAttribute("href", `mailto:${emailVal}`);
+        emailBtn.hidden = false;
+      } else {
+        emailBtn.removeAttribute("href");
+        emailBtn.hidden = true;
+      }
+    }
+  };
+  syncContactLinks();
+
   let savedScrollY = 0;
+  let openedAt = 0;
+
+  const setBackgroundInert = (isInert) => {
+    const regions = document.querySelectorAll("body > header, body > main, body > footer");
+    regions.forEach((el) => {
+      if (isInert) {
+        if ("inert" in el) el.inert = true;
+        el.setAttribute("inert", "");
+        el.setAttribute("aria-hidden", "true");
+      } else {
+        if ("inert" in el) el.inert = false;
+        el.removeAttribute("inert");
+        el.removeAttribute("aria-hidden");
+      }
+    });
+  };
+
+  const getFocusableElements = () => {
+    const candidates = drawer.querySelectorAll(
+      "button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex=\"-1\"])"
+    );
+    return Array.from(candidates).filter((el) => !el.hidden && el.offsetParent !== null);
+  };
 
   const openDrawer = () => {
+    if (drawer.classList.contains("open")) return;
+
+    syncCurrentPageTile();
+    syncContactLinks();
+
+    openedAt = Date.now();
     savedScrollY = window.pageYOffset || document.documentElement.scrollTop || 0;
+
+    if (sheet) {
+      sheet.classList.remove("is-dragging");
+      sheet.style.transform = "";
+    }
 
     drawer.classList.add("open");
     overlay.classList.add("open");
     drawer.setAttribute("aria-hidden", "false");
     if (openBtn) {
       openBtn.setAttribute("aria-expanded", "true");
+      openBtn.setAttribute("aria-label", "Close menu");
       openBtn.classList.add("is-active");
     }
 
-    // Complete background scroll lock (prevents background movement on iOS Safari & Android)
+    setBackgroundInert(true);
+
+    // Complete background scroll lock without jump
     document.documentElement.classList.add("drawer-open");
     document.body.classList.add("drawer-open");
     document.body.style.position = "fixed";
@@ -493,20 +600,37 @@ function initMobileDrawer() {
     document.body.style.left = "0";
     document.body.style.right = "0";
     document.body.style.width = "100%";
+
+    if (closeBtn) {
+      window.requestAnimationFrame(() => {
+        if (drawer.classList.contains("open")) {
+          closeBtn.focus({ preventScroll: true });
+        }
+      });
+    }
   };
 
-  const closeDrawer = () => {
+  const closeDrawer = (skipFocusReturn = false) => {
     if (!drawer.classList.contains("open")) return;
+
+    if (sheet) {
+      sheet.classList.remove("is-dragging");
+      sheet.style.transform = "";
+    }
 
     drawer.classList.remove("open");
     overlay.classList.remove("open");
     drawer.setAttribute("aria-hidden", "true");
+
+    setBackgroundInert(false);
+
     if (openBtn) {
       openBtn.setAttribute("aria-expanded", "false");
+      openBtn.setAttribute("aria-label", "Open menu");
       openBtn.classList.remove("is-active");
     }
 
-    // Release scroll lock and cleanly restore position
+    // Release scroll lock and cleanly restore exact scroll position
     document.documentElement.classList.remove("drawer-open");
     document.body.classList.remove("drawer-open");
     document.body.style.position = "";
@@ -520,37 +644,153 @@ function initMobileDrawer() {
     htmlEl.style.scrollBehavior = "auto";
     window.scrollTo(0, savedScrollY);
     htmlEl.style.scrollBehavior = prevScrollBehavior;
+
+    if (!skipFocusReturn && openBtn && window.innerWidth <= 1040) {
+      openBtn.focus({ preventScroll: true });
+    }
   };
 
-  if (openBtn) openBtn.addEventListener("click", openDrawer);
-  if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
-  overlay.addEventListener("click", closeDrawer);
+  if (openBtn) {
+    openBtn.addEventListener("click", () => {
+      if (drawer.classList.contains("open")) {
+        closeDrawer(false);
+      } else {
+        openDrawer();
+      }
+    });
+  }
+  if (closeBtn) closeBtn.addEventListener("click", () => closeDrawer(false));
+  overlay.addEventListener("click", () => {
+    if (Date.now() - openedAt < 300) return;
+    closeDrawer(false);
+  });
+  if (photoWrap) {
+    photoWrap.addEventListener("click", () => {
+      if (Date.now() - openedAt < 300) return;
+      closeDrawer(false);
+    });
+  }
 
-  // Prevent background touch scrolling on mobile when touching outside the drawer
+  // Prevent background touch scrolling on mobile when touching outside the sheet
   const preventBackgroundTouchScroll = (e) => {
     if (!drawer.classList.contains("open")) return;
-    if (!drawer.contains(e.target)) {
+    if (!sheet || !sheet.contains(e.target)) {
       e.preventDefault();
     }
   };
   document.addEventListener("touchmove", preventBackgroundTouchScroll, { passive: false });
 
+  // Escape & Focus Trap
   document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && drawer.classList.contains("open")) {
-      closeDrawer();
+    if (!drawer.classList.contains("open")) return;
+
+    if (e.key === "Escape") {
+      e.preventDefault();
+      closeDrawer(false);
+      return;
+    }
+
+    if (e.key === "Tab") {
+      const focusables = getFocusableElements();
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+
+      if (e.shiftKey) {
+        if (document.activeElement === first || !drawer.contains(document.activeElement)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last || !drawer.contains(document.activeElement)) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
     }
   });
 
   // Automatically reset lock if resized to desktop (> 1040px)
   window.addEventListener("resize", () => {
     if (window.innerWidth > 1040 && drawer.classList.contains("open")) {
-      closeDrawer();
+      closeDrawer(true);
     }
   });
 
-  // Close when clicking any nav link or CTA button in drawer
-  const drawerLinks = drawer.querySelectorAll(".drawer-link, .btn");
-  drawerLinks.forEach(link => link.addEventListener("click", closeDrawer));
+  // Swipe-down gesture on the sheet
+  if (sheet) {
+    let pointerId = null;
+    let startY = 0;
+    let startTime = 0;
+    let currentDy = 0;
+    let isDragging = false;
+
+    const resetDrag = () => {
+      pointerId = null;
+      isDragging = false;
+      currentDy = 0;
+      sheet.classList.remove("is-dragging");
+      sheet.style.transform = "";
+    };
+
+    sheet.addEventListener("pointerdown", (e) => {
+      if (!drawer.classList.contains("open")) return;
+      if (e.button !== undefined && e.button !== 0 && e.pointerType === "mouse") return;
+      if (sheet.scrollTop > 0) return;
+
+      pointerId = e.pointerId;
+      startY = e.clientY;
+      startTime = Date.now();
+      currentDy = 0;
+      isDragging = false;
+    });
+
+    sheet.addEventListener("pointermove", (e) => {
+      if (pointerId === null || e.pointerId !== pointerId) return;
+      if (!drawer.classList.contains("open")) {
+        resetDrag();
+        return;
+      }
+
+      const dy = e.clientY - startY;
+      if (!isDragging) {
+        if (sheet.scrollTop > 0 || dy <= 8) return;
+        isDragging = true;
+        sheet.classList.add("is-dragging");
+      }
+
+      currentDy = Math.max(0, dy);
+      sheet.style.transform = `translateY(${currentDy}px)`;
+    });
+
+    const endDrag = (e) => {
+      if (pointerId === null || e.pointerId !== pointerId) return;
+      if (!isDragging) {
+        pointerId = null;
+        return;
+      }
+
+      const elapsed = Math.max(1, Date.now() - startTime);
+      const velocity = currentDy / elapsed;
+      const shouldClose = currentDy > 80 || (currentDy > 24 && velocity > 0.45);
+
+      resetDrag();
+      if (shouldClose) {
+        closeDrawer(false);
+      }
+    };
+
+    sheet.addEventListener("pointerup", endDrag);
+    sheet.addEventListener("pointercancel", endDrag);
+  }
+
+  // Close when clicking any tile or action link (Page Gateway transition still runs)
+  const navLinks = drawer.querySelectorAll(".m-menu-tile, .m-menu-cta");
+  navLinks.forEach((link) => {
+    link.addEventListener("click", () => {
+      closeDrawer(true);
+    });
+  });
 }
 
 /* ==========================================================================
