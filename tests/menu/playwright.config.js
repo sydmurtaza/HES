@@ -33,6 +33,14 @@ module.exports = defineConfig({
       }
     },
     {
+      name: 'Mobile 360x640',
+      use: {
+        ...devices['Pixel 7'],
+        viewport: { width: 360, height: 640 },
+        channel: 'chrome'
+      }
+    },
+    {
       name: 'Compact 320x568',
       use: {
         ...devices['iPhone SE'],

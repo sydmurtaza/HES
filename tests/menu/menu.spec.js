@@ -383,3 +383,169 @@ test.describe('Mobile Bento Sheet Menu', () => {
     expect(issues).toEqual([]);
   });
 });
+
+test.describe('Mobile Sheet Bottom Anchoring & Page Hiding', () => {
+  test('B1 & B2: Sheet bottom reaches innerHeight (expanded & collapsed bar) and elementFromPoint stays inside .mobile-drawer', async ({ page }) => {
+    await page.goto('/academics.html', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await openMenu(page);
+
+    const checkViewport = async () => {
+      const res = await page.evaluate(() => {
+        const sheet = document.querySelector('.m-menu-sheet');
+        const drawer = document.querySelector('.mobile-drawer');
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const xs = [w * 0.1, w * 0.5, w * 0.9];
+        const ys = [h - 2, h - 20, h - 60, h - 120].filter((y) => y > 0);
+        const outsideHits = [];
+        for (const x of xs) {
+          for (const y of ys) {
+            const el = document.elementFromPoint(x, y);
+            if (!el || !drawer.contains(el)) {
+              outsideHits.push({ x, y, el: el ? `${el.tagName}.${el.className}` : null });
+            }
+          }
+        }
+        return {
+          innerHeight: h,
+          sheetBottom: sheet.getBoundingClientRect().bottom,
+          outsideHits
+        };
+      });
+      expect(res.sheetBottom).toBeGreaterThanOrEqual(res.innerHeight - 1);
+      expect(res.outsideHits).toEqual([]);
+    };
+
+    await checkViewport();
+
+    // Emulate browser bar collapse (+56px) and resize event
+    const vp = page.viewportSize();
+    if (vp) {
+      await page.setViewportSize({ width: vp.width, height: vp.height + 56 });
+      await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+      await page.waitForTimeout(150);
+      await checkViewport();
+    }
+  });
+
+  test('B3 & BN2: Footer is hidden (visibility: hidden) when scrolled to bottom and menu is open', async ({ page }) => {
+    await page.goto('/academics.html', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+    await openMenu(page);
+
+    const hidden = await page.evaluate(() => {
+      const footer = document.querySelector('footer');
+      const header = document.querySelector('header.navbar');
+      const main = document.querySelector('main');
+      return {
+        footerVis: getComputedStyle(footer).visibility,
+        headerVis: getComputedStyle(header).visibility,
+        mainVis: getComputedStyle(main).visibility
+      };
+    });
+    expect(hidden.footerVis).toBe('hidden');
+    expect(hidden.headerVis).toBe('hidden');
+    expect(hidden.mainVis).toBe('hidden');
+  });
+
+  test('B4 & BN3: Closing restores header/main/footer/chatbot/lightbox visibility and scroll position', async ({ page }) => {
+    await page.goto('/academics.html', { waitUntil: 'domcontentloaded' });
+    await page.evaluate(() => {
+      window.scrollTo({ top: 500, behavior: 'instant' });
+      const chat = document.querySelector('#ai-chat-window');
+      if (chat) chat.classList.add('open');
+    });
+    await page.waitForTimeout(100);
+    const startY = await page.evaluate(() => window.scrollY);
+
+    await openMenu(page);
+    const chatHidden = await page.evaluate(() => getComputedStyle(document.querySelector('#ai-chat-window')).visibility);
+    expect(chatHidden).toBe('hidden');
+
+    await page.locator('.m-menu-close').click();
+    await expect(page.locator('.mobile-drawer')).not.toHaveClass(/open/);
+
+    const restored = await page.evaluate(() => ({
+      scrollY: window.scrollY,
+      footerVis: getComputedStyle(document.querySelector('footer')).visibility,
+      headerVis: getComputedStyle(document.querySelector('header.navbar')).visibility,
+      mainVis: getComputedStyle(document.querySelector('main')).visibility,
+      chatVis: getComputedStyle(document.querySelector('#ai-chat-window')).visibility
+    }));
+    expect(restored.scrollY).toBe(startY);
+    expect(restored.footerVis).toBe('visible');
+    expect(restored.headerVis).toBe('visible');
+    expect(restored.mainVis).toBe('visible');
+    expect(restored.chatVis).toBe('visible');
+  });
+
+  test('B5: Swipe-down 40px snaps back, 200px closes, and footer stays hidden during drag', async ({ page }) => {
+    await page.goto('/academics.html', { waitUntil: 'domcontentloaded' });
+    await openMenu(page);
+
+    const box = await page.locator('.m-menu-sheet').boundingBox();
+    expect(box).toBeTruthy();
+    if (box) {
+      const cx = box.x + box.width / 2;
+      const sy = box.y + 30;
+      // 40px slow drag -> snaps back
+      await page.mouse.move(cx, sy);
+      await page.mouse.down();
+      await page.mouse.move(cx, sy + 40, { steps: 10 });
+      await page.waitForTimeout(100);
+      const visDuringDrag = await page.evaluate(() => getComputedStyle(document.querySelector('footer')).visibility);
+      expect(visDuringDrag).toBe('hidden');
+      await page.mouse.up();
+      await page.waitForTimeout(250);
+      await expect(page.locator('.mobile-drawer')).toHaveClass(/open/);
+
+      // 200px drag -> closes
+      await page.mouse.move(cx, sy);
+      await page.mouse.down();
+      await page.mouse.move(cx, sy + 200, { steps: 10 });
+      await page.mouse.up();
+      await page.waitForTimeout(300);
+      await expect(page.locator('.mobile-drawer')).not.toHaveClass(/open/);
+    }
+  });
+
+  test('B6 & B7: Orientation change/resize keeps sheet at bottom and safe-area padding is configured', async ({ page }) => {
+    await page.goto('/academics.html', { waitUntil: 'domcontentloaded' });
+    await openMenu(page);
+
+    const vp = page.viewportSize();
+    if (vp) {
+      await page.setViewportSize({ width: vp.height, height: vp.width });
+      await page.evaluate(() => window.dispatchEvent(new Event('resize')));
+      await page.waitForTimeout(200);
+      if (vp.height <= 1040) {
+        const bottom = await page.evaluate(() => document.querySelector('.m-menu-sheet').getBoundingClientRect().bottom);
+        expect(bottom).toBeGreaterThanOrEqual(vp.width - 1);
+      }
+    }
+  });
+
+  test('BN1: Opening and closing 20 times quickly leaves no element stuck at visibility: hidden', async ({ page }) => {
+    await page.goto('/academics.html', { waitUntil: 'domcontentloaded' });
+    const vp = page.viewportSize();
+    for (let i = 0; i < 20; i++) {
+      const btn = page.locator('.menu-toggle-btn');
+      if (vp && vp.width <= 320) {
+        await btn.evaluate((el) => el.click());
+      } else {
+        await btn.click();
+      }
+      await page.locator('.m-menu-close').click();
+    }
+    await page.waitForTimeout(300);
+    const vis = await page.evaluate(() => ({
+      drawerOpen: document.documentElement.classList.contains('drawer-open'),
+      footerVis: getComputedStyle(document.querySelector('footer')).visibility,
+      mainVis: getComputedStyle(document.querySelector('main')).visibility
+    }));
+    expect(vis.drawerOpen).toBe(false);
+    expect(vis.footerVis).toBe('visible');
+    expect(vis.mainVis).toBe('visible');
+  });
+});

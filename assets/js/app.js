@@ -544,9 +544,11 @@ function initMobileDrawer() {
 
   let savedScrollY = 0;
   let openedAt = 0;
+  let savedThemeColor = null;
+  const themeColorMeta = document.querySelector("meta[name=\"theme-color\"]");
 
   const setBackgroundInert = (isInert) => {
-    const regions = document.querySelectorAll("body > header, body > main, body > footer");
+    const regions = document.querySelectorAll("body > header, body > main, body > footer, #ai-chat-window, #open-ai-chat, .lightbox-modal, .cl-lightbox-modal");
     regions.forEach((el) => {
       if (isInert) {
         if ("inert" in el) el.inert = true;
@@ -590,6 +592,11 @@ function initMobileDrawer() {
       openBtn.classList.add("is-active");
     }
 
+    if (themeColorMeta) {
+      savedThemeColor = themeColorMeta.getAttribute("content");
+      themeColorMeta.setAttribute("content", "#FFFFFF");
+    }
+
     setBackgroundInert(true);
 
     // Complete background scroll lock without jump
@@ -624,6 +631,11 @@ function initMobileDrawer() {
 
     setBackgroundInert(false);
 
+    if (themeColorMeta && savedThemeColor !== null) {
+      themeColorMeta.setAttribute("content", savedThemeColor);
+      savedThemeColor = null;
+    }
+
     if (openBtn) {
       openBtn.setAttribute("aria-expanded", "false");
       openBtn.setAttribute("aria-label", "Open menu");
@@ -646,7 +658,15 @@ function initMobileDrawer() {
     htmlEl.style.scrollBehavior = prevScrollBehavior;
 
     if (!skipFocusReturn && openBtn && window.innerWidth <= 1040) {
+      const navbarInner = document.querySelector("header.navbar .navbar-inner");
+      if (navbarInner) navbarInner.style.setProperty("transition", "none", "important");
+      void window.getComputedStyle(openBtn).visibility;
       openBtn.focus({ preventScroll: true });
+      if (navbarInner) {
+        window.requestAnimationFrame(() => {
+          navbarInner.style.removeProperty("transition");
+        });
+      }
     }
   };
 
